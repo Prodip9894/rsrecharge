@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSRecharge - Dashboard</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:Arial,sans-serif; background:#f0f2f5; }
+        .topbar { background:#0d1b2a; color:#fff; padding:12px 24px; display:flex; justify-content:space-between; align-items:center; }
+        .topbar h2 { font-size:18px; }
+        .topbar button { background:#c00; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; }
+        .container { max-width:1200px; margin:20px auto; padding:0 20px; }
+        .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px; }
+        .stat { background:#fff; padding:20px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+        .stat h3 { color:#666; font-size:13px; margin-bottom:8px; }
+        .stat p { font-size:24px; font-weight:700; color:#0d1b2a; }
+        .card { background:#fff; padding:20px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08); margin-bottom:16px; }
+        .card h3 { margin-bottom:12px; color:#0d1b2a; }
+        .menu { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
+        .menu a { display:block; padding:16px; background:#f8f9fa; border-radius:8px; text-decoration:none; color:#333; text-align:center; font-size:14px; border:1px solid #eee; }
+        .menu a:hover { background:#0a9396; color:#fff; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h2>&#9889; RSRecharge</h2>
+        <div>
+            <span id="userName" style="margin-right:16px"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="stats" id="stats"></div>
+        <div class="card">
+            <h3>Services</h3>
+            <div class="menu">
+                <a href="#">Mobile Recharge</a>
+                <a href="#">DTH Recharge</a>
+                <a href="#">Bill Payment</a>
+                <a href="#">AEPS</a>
+                <a href="#">Money Transfer</a>
+                <a href="#">Wallet</a>
+                <a href="#">Transactions</a>
+                <a href="#">Notifications</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        var user = null;
+        var token = localStorage.getItem('token');
+        try { user = JSON.parse(localStorage.getItem('user')); } catch(e) {}
+
+        if (!token || !user) { window.location.href = '/'; }
+
+        document.getElementById('userName').textContent = user ? (user.name + ' (' + user.role + ')') : '';
+
+        if (user && user.role === 'admin') {
+            document.getElementById('stats').innerHTML = '<div class="stat"><h3>Total Users</h3><p id="s1">...</p></div><div class="stat"><h3>Today Transactions</h3><p id="s2">...</p></div><div class="stat"><h3>Wallet Balance</h3><p id="s3">...</p></div><div class="stat"><h3>Revenue</h3><p id="s4">...</p></div>';
+            fetch('/api/dashboard', { headers: { 'Authorization': 'Bearer ' + token } })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    if (d.success && d.data) {
+                        document.getElementById('s1').textContent = d.data.totalUsers || 0;
+                        document.getElementById('s2').textContent = d.data.todayTransactions || 0;
+                        document.getElementById('s3').textContent = '\u20B9' + (d.data.totalWalletBalance || 0);
+                        document.getElementById('s4').textContent = '\u20B9' + (d.data.todayRevenue || 0);
+                    }
+                }).catch(function() {});
+        } else {
+            document.getElementById('stats').innerHTML = '<div class="stat"><h3>Wallet Balance</h3><p>...</p></div><div class="stat"><h3>Today Recharges</h3><p>0</p></div>';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
