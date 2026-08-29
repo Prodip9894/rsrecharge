@@ -133,9 +133,10 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 <div class="nav-parent" onclick="toggleParent(this)">
 <a class="nav-item"><i class="bi bi-wallet2"></i> Wallet & Fund <i class="bi bi-chevron-right caret"></i></a>
 <div class="sub-nav">
-<a class="nav-item" data-page="wallet-adjust" onclick="showPage('wallet-adjust')">Wallet Adjust</a>
-<a class="nav-item" data-page="wallet-transfer" onclick="showPage('wallet-transfer')">Fund Transfer</a>
-<a class="nav-item" data-page="move-to-bank" onclick="showPage('move-to-bank')">Move to Bank Requests</a>
+<a class="nav-item" data-page="fund-requests" onclick="showPage('fund-requests')">Fund Requests</a>
+<a class="nav-item" data-page="fund-credit-debit" onclick="showPage('fund-credit-debit')">Fund Credit / Debit</a>
+<a class="nav-item" data-page="upi-add-money" onclick="showPage('upi-add-money')">UPI Add Money</a>
+<a class="nav-item" data-page="bank-details" onclick="showPage('bank-details')">Bank Details</a>
 </div></div>
 
 <div class="nav-parent" onclick="toggleParent(this)">
@@ -447,42 +448,87 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 </div>
 
 <!-- ==================== WALLET ADJUST ==================== -->
-<div class="page" id="page-wallet-adjust">
-<div class="row justify-content-center"><div class="col-lg-6">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-wallet2 text-primary me-2"></i>Wallet Adjust</h6>
-<div class="row g-3">
-<div class="col-12"><label class="form-label">User ID</label><input class="form-control" id="waUserId" placeholder="Enter user_id (e.g. US123456)"></div>
-<div class="col-md-6"><label class="form-label">Type</label><select class="form-select" id="waType"><option value="credit">Credit (+)</option><option value="debit">Debit (-)</option></select></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input class="form-control" id="waAmount" type="number" min="1" placeholder="Amount"></div>
-<div class="col-12"><label class="form-label">Description</label><input class="form-control" id="waDesc" placeholder="Reason for adjustment"></div>
-<div class="col-12"><div id="waResult" class="alert d-none" style="border-radius:10px"></div></div>
-<div class="col-12"><button class="btn btn-brand" onclick="adminWalletAdjust()">Adjust Wallet</button></div>
-</div></div></div></div>
+<div class="page" id="page-fund-requests">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0">Fund Requests</h6>
+<div class="d-flex gap-2">
+<select class="form-select form-select-sm" style="width:auto" id="frStatusFilter" onchange="loadFundRequests()"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+</div></div>
+<div class="stat-grid mb-4">
+<div class="stat-card yellow"><div class="label">Pending Requests</div><div class="value" id="frPending">0</div><div class="sub">Awaiting approval</div></div>
+<div class="stat-card green"><div class="label">Approved Today</div><div class="value" id="frApproved">₹0</div><div class="sub">Credited today</div></div>
 </div>
-
-<!-- ==================== FUND TRANSFER ==================== -->
-<div class="page" id="page-wallet-transfer">
-<div class="row justify-content-center"><div class="col-lg-6">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-arrow-left-right text-primary me-2"></i>Fund Transfer (Admin → User)</h6>
-<div class="row g-3">
-<div class="col-12"><label class="form-label">Recipient User ID</label><input class="form-control" id="ftToUser" placeholder="Enter user_id"></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input class="form-control" id="ftAmount" type="number" min="1" placeholder="Amount"></div>
-<div class="col-md-6"><label class="form-label">Description</label><input class="form-control" id="ftDesc" placeholder="Optional note"></div>
-<div class="col-12"><div id="ftResult" class="alert d-none" style="border-radius:10px"></div></div>
-<div class="col-12"><button class="btn btn-brand" onclick="adminFundTransfer()">Transfer Now</button></div>
-</div></div></div></div>
-</div>
-
-<!-- ==================== MOVE TO BANK ==================== -->
-<div class="page" id="page-move-to-bank">
-<h6 class="fw-bold mb-4">Move to Bank Requests</h6>
-<div class="mb-3"><select class="form-select form-select-sm" style="width:auto" id="mtbStatusFilter" onchange="loadMoveToBank()"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
 <div class="table-container"><div class="table-responsive"><table class="table">
-<thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Account</th><th>IFSC</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody id="mtbBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+<thead><tr><th>User ID</th><th>Name</th><th>Mobile</th><th>Amount</th><th>Method</th><th>UTR / Ref</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+<tbody id="fundReqBody"><tr><td colspan="9" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
 </table></div></div>
+</div>
+
+<div class="page" id="page-fund-credit-debit">
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-plus-circle-fill text-success me-2"></i>Fund Credit (Add Balance)</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">User ID *</label><input class="form-control" id="fcUserId" placeholder="Enter user_id (e.g. US123456)"></div>
+<div class="col-md-6"><label class="form-label">Amount (₹) *</label><input class="form-control" id="fcAmount" type="number" min="1" placeholder="Amount"></div>
+<div class="col-md-6"><label class="form-label">Payment Mode</label><select class="form-select" id="fcMode"><option>Cash</option><option>Bank Transfer</option><option>UPI</option><option>Cheque</option><option>Adjustment</option></select></div>
+<div class="col-12"><label class="form-label">Description *</label><input class="form-control" id="fcDesc" placeholder="Reason for credit"></div>
+<div class="col-12"><div id="fcResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="adminFundCredit()"><i class="bi bi-plus-lg me-1"></i> Credit Balance</button></div>
+</div></div></div>
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-dash-circle-fill text-danger me-2"></i>Fund Debit (Deduct Balance)</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">User ID *</label><input class="form-control" id="fdUserId" placeholder="Enter user_id (e.g. US123456)"></div>
+<div class="col-md-6"><label class="form-label">Amount (₹) *</label><input class="form-control" id="fdAmount" type="number" min="1" placeholder="Amount"></div>
+<div class="col-md-6"><label class="form-label">Reason</label><select class="form-select" id="fdReason"><option>Penalty</option><option>Adjustment</option><option>Overpayment</option><option>Reversal</option><option>Other</option></select></div>
+<div class="col-12"><label class="form-label">Description *</label><input class="form-control" id="fdDesc" placeholder="Reason for debit"></div>
+<div class="col-12"><div id="fdResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-danger" onclick="adminFundDebit()" style="font-weight:700;border-radius:10px;padding:10px 22px"><i class="bi bi-dash-lg me-1"></i> Debit Balance</button></div>
+</div></div></div>
+</div>
+</div>
+
+<div class="page" id="page-upi-add-money">
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="stat-card text-center">
+<h6 class="fw-bold mb-4"><i class="bi bi-qr-code-scan text-info me-2"></i>UPI Add Money Settings</h6>
+<div class="row g-3 text-start">
+<div class="col-12"><label class="form-label">UPI ID</label><input class="form-control" id="amiUpiId" placeholder="e.g. rsrecharge@upi"></div>
+<div class="col-md-6"><label class="form-label">Merchant Name</label><input class="form-control" id="amiMerchant" placeholder="RSRecharge"></div>
+<div class="col-md-6"><label class="form-label">UPI Enabled</label><select class="form-select" id="amiEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><label class="form-label">QR Code Image URL</label><input class="form-control" id="amiQR" placeholder="URL of QR code image"></div>
+<div class="col-12"><label class="form-label">Minimum Add Amount (₹)</label><input class="form-control" id="amiMin" type="number" value="10" min="1"></div>
+<div class="col-12"><label class="form-label">Maximum Add Amount (₹)</label><input class="form-control" id="amiMax" type="number" value="50000"></div>
+</div>
+<div style="background:#fff;border-radius:16px;padding:20px;display:inline-block;margin:20px 0">
+<div style="width:180px;height:180px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center" id="amiQRPreview"><span class="text-secondary small">QR Preview</span></div>
+</div>
+<p class="text-secondary small mb-3">This QR will be shown to retailers for self wallet loading</p>
+<div class="text-start"><div id="amiResult" class="alert d-none" style="border-radius:10px"></div></div>
+<button class="btn btn-brand" onclick="saveUPIAddMoney()"><i class="bi bi-check-lg me-1"></i> Save Settings</button>
+</div></div></div>
+</div>
+
+<div class="page" id="page-bank-details">
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-bank text-primary me-2"></i>Company Bank Details</h6>
+<p class="text-secondary small mb-3">These details are shown to retailers for manual bank transfers / fund requests.</p>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Bank Name</label><input class="form-control" id="bdBankName" placeholder="e.g. State Bank of India"></div>
+<div class="col-md-6"><label class="form-label">Account Holder Name</label><input class="form-control" id="bdHolder" placeholder="e.g. RSRecharge Pvt Ltd"></div>
+<div class="col-md-6"><label class="form-label">Account Number</label><input class="form-control" id="bdAccount" placeholder="Account number"></div>
+<div class="col-md-6"><label class="form-label">Confirm Account Number</label><input class="form-control" id="bdAccountConfirm" placeholder="Re-enter account number"></div>
+<div class="col-md-6"><label class="form-label">IFSC Code</label><input class="form-control" id="bdIfsc" placeholder="e.g. SBIN0001234"></div>
+<div class="col-md-6"><label class="form-label">Account Type</label><select class="form-select" id="bdType"><option>Current</option><option>Savings</option></select></div>
+<div class="col-12"><label class="form-label">UPI ID (for UPI transfers)</label><input class="form-control" id="bdUpi" placeholder="e.g. rsrecharge@upi"></div>
+<div class="col-12"><label class="form-label">Additional Instructions</label><textarea class="form-control" id="bdInstructions" rows="2" placeholder="e.g. Please include your User ID in payment remarks"></textarea></div>
+<div class="col-12"><div id="bdResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveBankDetails()"><i class="bi bi-check-lg me-1"></i> Save Bank Details</button></div>
+</div></div></div></div>
 </div>
 
 <!-- ==================== UPI SETTINGS ==================== -->
@@ -698,7 +744,7 @@ document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
 document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
 const pg=document.getElementById('page-'+p);
 if(pg){pg.classList.add('active');document.querySelector(`[data-page="${p}"]`)?.classList.add('active')}
-const titles={dashboard:'Admin Dashboard','users-all':'All Users','users-add':'Add User','users-pending':'Pending Approvals','api-providers':'Recharge API Management','api-operators':'Operator Master','api-operator-code':'API Operator Code','api-switching':'Random API Switching','api-fetch':'Operator Fetch API','api-plan':'Plan API','commission-rules':'Commission Rules','commission-today':"Today's Commission",'wallet-adjust':'Wallet Adjust','wallet-transfer':'Fund Transfer','move-to-bank':'Move to Bank Requests','upi-settings':'UPI Settings','payout-settings':'Pay-in / Payout Settings','whatsapp-settings':'WhatsApp Settings','send-notification':'Send Notification','general-settings':'General Settings',banners:'Banners','audit-logs':'Audit Logs','report-transactions':'Transaction Report'};
+const titles={dashboard:'Admin Dashboard','users-all':'All Users','users-add':'Add User','users-pending':'Pending Approvals','api-providers':'Recharge API Management','api-operators':'Operator Management','api-operator-code':'API Operator Code','api-switching':'Random API Switching','api-fetch':'Operator Fetch API','api-plan':'Plan API','commission-rules':'Commission Rules','commission-today':"Today's Commission",'fund-requests':'Fund Requests','fund-credit-debit':'Fund Credit / Debit','upi-add-money':'UPI Add Money','bank-details':'Bank Details','upi-settings':'UPI Settings','payout-settings':'Pay-in / Payout Settings','whatsapp-settings':'WhatsApp Settings','send-notification':'Send Notification','general-settings':'General Settings',banners:'Banners','audit-logs':'Audit Logs','report-transactions':'Transaction Report'};
 document.getElementById('pageTitle').textContent=titles[p]||'Dashboard';
 if(window.innerWidth<992)toggleSidebar();
 loadPageData(p);
@@ -737,8 +783,10 @@ else if(p==='api-fetch')await loadFetchSettings();
 else if(p==='api-plan')await loadPlanSettings();
 else if(p==='commission-rules')await loadCommissionRules();
 else if(p==='commission-today')await loadTodayCommission();
-else if(p==='move-to-bank')await loadMoveToBank();
+else if(p==='fund-requests')await loadFundRequests();
 else if(p==='upi-settings')await loadUPISettings();
+else if(p==='upi-add-money')await loadUPIAddMoney();
+else if(p==='bank-details')await loadBankDetails();
 else if(p==='payout-settings')await loadPayoutSettings();
 else if(p==='whatsapp-settings')await loadWhatsAppSettings();
 else if(p==='general-settings')await loadGeneralSettings();
@@ -1011,34 +1059,83 @@ document.getElementById('tcMD').textContent='₹'+Number(c.master_distributor||0
 document.getElementById('tcTotal').textContent='₹'+Number(c.total||0).toFixed(2);
 }
 
-// ===== WALLET =====
-async function adminWalletAdjust(){
-const d=await apiFetch('/admin/wallet-adjust',{method:'POST',body:JSON.stringify({user_id:parseInt(document.getElementById('waUserId').value),amount:parseFloat(document.getElementById('waAmount').value),type:document.getElementById('waType').value,description:document.getElementById('waDesc').value})});
-showResult('waResult',d?.success?'Wallet adjusted successfully!':(d?.message||'Failed'),d?.success?'success':'error');
-}
-
-async function adminFundTransfer(){
-const d=await apiFetch('/admin/wallet-transfer',{method:'POST',body:JSON.stringify({to_user_id:parseInt(document.getElementById('ftToUser').value),amount:parseFloat(document.getElementById('ftAmount').value),description:document.getElementById('ftDesc').value})});
-showResult('ftResult',d?.success?'Transfer successful!':(d?.message||'Failed'),d?.success?'success':'error');
-}
-
-// ===== MOVE TO BANK =====
-async function loadMoveToBank(){
-const status=document.getElementById('mtbStatusFilter')?.value||'';
+// ===== WALLET & FUND =====
+async function loadFundRequests(){
+const status=document.getElementById('frStatusFilter')?.value||'';
 let qs=new URLSearchParams();if(status)qs.set('status',status);
 const d=await apiFetch('/admin/move-to-bank?'+qs);
 if(!d||!d.success)return;
 const reqs=d.data||[];
-document.getElementById('mtbBody').innerHTML=reqs.length?reqs.map(r=>{
+const pendingCount=reqs.filter(r=>r.status==='pending').length;
+document.getElementById('frPending').textContent=pendingCount;
+document.getElementById('frApproved').textContent='₹'+reqs.filter(r=>r.status==='approved'&&new Date(r.processed_at||r.created_at).toDateString()===new Date().toDateString()).reduce((s,r)=>s+Number(r.amount),0).toFixed(2);
+document.getElementById('fundReqBody').innerHTML=reqs.length?reqs.map(r=>{
 const sc=r.status==='approved'?'badge-success':r.status==='rejected'?'badge-failed':'badge-pending';
-const btns=r.status==='pending'?`<div class="d-flex gap-1"><button class="btn btn-sm btn-outline-success" onclick="processMTB(${r.id},'approved')">Approve</button><button class="btn btn-sm btn-outline-danger" onclick="processMTB(${r.id},'rejected')">Reject</button></div>`:'-';
-return `<tr><td>${r.user_name||'-'}</td><td>₹${Number(r.amount).toFixed(2)}</td><td>${r.bank_name||'-'}</td><td>${r.account_number||'-'}</td><td>${r.ifsc_code||'-'}</td><td><span class="${sc}">${r.status}</span></td><td>${btns}</td></tr>`;
-}).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No requests found</td></tr>';
+const btns=r.status==='pending'?`<div class="d-flex gap-1"><button class="btn btn-sm btn-outline-success" onclick="processFundReq(${r.id},'approved')"><i class="bi bi-check-lg"></i> Approve</button><button class="btn btn-sm btn-outline-danger" onclick="processFundReq(${r.id},'rejected')"><i class="bi bi-x-lg"></i></button></div>`:'-';
+return `<tr><td>${r.user_code||'-'}</td><td>${r.user_name||'-'}</td><td>${r.user_mobile||'-'}</td><td>₹${Number(r.amount).toFixed(2)}</td><td>Bank Transfer</td><td>-</td><td><span class="${sc}">${r.status}</span></td><td>${r.created_at?new Date(r.created_at).toLocaleDateString('en-IN'):''}</td><td>${btns}</td></tr>`;
+}).join(''):'<tr><td colspan="9" class="text-center text-secondary py-4">No fund requests found</td></tr>';
 }
 
-async function processMTB(id,status){
-const d=await apiFetch(`/admin/move-to-bank/${id}`,{method:'PUT',body:JSON.stringify({status})});
-if(d?.success)loadMoveToBank();
+async function processFundReq(id,status){
+const d=await apiFetch(`/admin/move-to-bank/${id}`,{method:'PUT',body:JSON.stringify({status,remarks:`${status} by admin`})});
+if(d?.success)loadFundRequests();
+}
+
+async function adminFundCredit(){
+const d=await apiFetch('/admin/wallet-adjust',{method:'POST',body:JSON.stringify({user_id:parseInt(document.getElementById('fcUserId').value),amount:parseFloat(document.getElementById('fcAmount').value),type:'credit',description:`Fund Credit - ${document.getElementById('fcMode').value} - ${document.getElementById('fcDesc').value}`})});
+showResult('fcResult',d?.success?'Balance credited successfully!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+async function adminFundDebit(){
+const amt=parseFloat(document.getElementById('fdAmount').value);
+const uid=parseInt(document.getElementById('fdUserId').value);
+const desc=document.getElementById('fdDesc').value;
+const reason=document.getElementById('fdReason').value;
+if(!uid||!amt||!desc){showResult('fdResult','Please fill all required fields','error');return}
+const d=await apiFetch('/admin/wallet-adjust',{method:'POST',body:JSON.stringify({user_id:uid,amount:amt,type:'debit',description:`${reason} - ${desc}`})});
+showResult('fdResult',d?.success?'Balance debited successfully!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+async function loadUPIAddMoney(){
+const d=await apiFetch('/admin/upi-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('amiUpiId').value=s.upi_id||'';
+document.getElementById('amiMerchant').value=s.merchant_name||'';
+document.getElementById('amiEnabled').value=s.upi_enabled||'1';
+document.getElementById('amiQR').value=s.qr_image||'';
+}
+
+async function saveUPIAddMoney(){
+const d=await apiFetch('/admin/upi-settings',{method:'PUT',body:JSON.stringify({upi_id:document.getElementById('amiUpiId').value,merchant_name:document.getElementById('amiMerchant').value,qr_image:document.getElementById('amiQR').value,upi_enabled:document.getElementById('amiEnabled').value==='1'})});
+showResult('amiResult',d?.success?'UPI Add Money settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+async function loadBankDetails(){
+const d=await apiFetch('/admin/settings');
+if(!d||!d.success)return;
+const settings=d.data||[];
+const bd={};settings.forEach(s=>{if(s.setting_group==='bank')bd[s.setting_key]=s.setting_value});
+document.getElementById('bdBankName').value=bd.bank_name||'';
+document.getElementById('bdHolder').value=bd.account_holder||'';
+document.getElementById('bdAccount').value=bd.account_number||'';
+document.getElementById('bdIfsc').value=bd.ifsc_code||'';
+document.getElementById('bdUpi').value=bd.upi_id||'';
+document.getElementById('bdInstructions').value=bd.payment_instructions||'';
+}
+
+async function saveBankDetails(){
+if(document.getElementById('bdAccount').value!==document.getElementById('bdAccountConfirm').value){showResult('bdResult','Account numbers do not match','error');return}
+const settings={
+bank_bank_name:document.getElementById('bdBankName').value,
+bank_account_holder:document.getElementById('bdHolder').value,
+bank_account_number:document.getElementById('bdAccount').value,
+bank_ifsc_code:document.getElementById('bdIfsc').value,
+bank_account_type:document.getElementById('bdType').value,
+bank_upi_id:document.getElementById('bdUpi').value,
+bank_payment_instructions:document.getElementById('bdInstructions').value
+};
+const d=await apiFetch('/admin/settings',{method:'PUT',body:JSON.stringify({settings})});
+showResult('bdResult',d?.success?'Bank details saved!':(d?.message||'Failed'),d?.success?'success':'error');
 }
 
 // ===== UPI =====

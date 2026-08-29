@@ -8,7 +8,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-body{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;background:#070b14;position:relative;perspective:1000px;overflow-x:hidden}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;background:#070b14;position:relative;overflow-x:hidden}
 body::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 50% 50%,rgba(14,165,233,0.15) 0%,rgba(7,11,20,0.85) 100%);z-index:0}
 .glow-card-wrapper{position:relative;border-radius:30px;padding:2px;background:linear-gradient(135deg,rgba(56,189,248,0.8),rgba(99,102,241,0.3),rgba(2,132,199,0.9),rgba(168,85,247,0.4));background-size:300% 300%;animation:neonGlow 6s ease infinite;box-shadow:0 0 25px rgba(56,189,248,0.35),0 0 50px rgba(2,132,199,0.2);transition:all 0.3s ease;z-index:1}
 .glow-card-wrapper:hover{box-shadow:0 0 35px rgba(56,189,248,0.6),0 0 70px rgba(99,102,241,0.4)}
@@ -63,7 +63,7 @@ body::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;backgrou
 <a href="#" class="forgot-pass">Forgot Your Password?</a>
 <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
 </form>
-<p class="support-text">Need help? <span class="text-white fw-bold">+91 9641742208</span></p>
+<p class="support-text">Need help? <span class="text-white fw-bold">+91 9082920165</span></p>
 </div>
 
 <div id="registerForm">
@@ -94,10 +94,6 @@ body::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;backgrou
 </div>
 
 <script>
-const card=document.getElementById('tilt-card');
-card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height/2;card.style.transform=`rotateX(${(y-cy)/28}deg) rotateY(${(cx-x)/28}deg)`});
-card.addEventListener('mouseleave',()=>{card.style.transform='rotateX(0) rotateY(0)'});
-
 function showTab(t){
 if(t==='login'){document.getElementById('loginForm').style.display='block';document.getElementById('registerForm').style.display='none';document.getElementById('tabLogin').classList.add('active');document.getElementById('tabRegister').classList.remove('active')}
 else{document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('tabLogin').classList.remove('active');document.getElementById('tabRegister').classList.add('active')}
