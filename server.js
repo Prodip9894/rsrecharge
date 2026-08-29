@@ -101,11 +101,11 @@ app.get('/api/dashboard', authenticateToken, async (req, res) => {
         }
       });
     } else {
-      const [todayTxns] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND DATE(created_at)=CURDATE()", [req.user.userId]);
-      const [success] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND status='completed' AND DATE(created_at)=CURDATE()", [req.user.userId]);
-      const [pending] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND status='pending' AND DATE(created_at)=CURDATE()", [req.user.userId]);
-      const [wallet] = await db.query('SELECT balance FROM wallets WHERE user_id=?', [req.user.userId]);
-      const [recentTxns] = await db.query('SELECT * FROM transactions WHERE user_id=? ORDER BY created_at DESC LIMIT 10', [req.user.userId]);
+      const [todayTxns] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND DATE(created_at)=CURDATE()", [req.user.id]);
+      const [success] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND status='completed' AND DATE(created_at)=CURDATE()", [req.user.id]);
+      const [pending] = await db.query("SELECT COUNT(*) as count FROM transactions WHERE user_id=? AND status='pending' AND DATE(created_at)=CURDATE()", [req.user.id]);
+      const [wallet] = await db.query('SELECT balance FROM wallets WHERE user_id=?', [req.user.id]);
+      const [recentTxns] = await db.query('SELECT * FROM transactions WHERE user_id=? ORDER BY created_at DESC LIMIT 10', [req.user.id]);
       res.json({
         success: true,
         data: {

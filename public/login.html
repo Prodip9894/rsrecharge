@@ -1,165 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSRecharge - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css?v=4">
-    <style>
-        body.login-page { margin:0; padding:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 50%, #0a9396 100%); }
-        .login-container { width:100%; max-width:420px; padding:20px; }
-        .login-card { background:#fff; border-radius:16px; padding:40px 36px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-        .login-header { text-align:center; margin-bottom:24px; }
-        .login-header .login-logo { font-size:2.5rem; margin-bottom:8px; }
-        .login-header .login-logo i { color:#0a9396; }
-        .login-header h1 { font-size:1.6rem; margin:0; color:#0d1b2a; }
-        .login-header p { color:#666; font-size:0.9rem; margin:4px 0 0; }
-        .login-tabs { display:flex; background:#f0f0f0; border-radius:10px; padding:4px; margin-bottom:24px; }
-        .login-tab { flex:1; padding:10px 16px; border:none; background:transparent; border-radius:8px; font-size:0.85rem; font-weight:500; color:#888; cursor:pointer; transition:all 0.2s; }
-        .login-tab.active { background:#fff; color:#0a9396; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom:18px; }
-        .form-group label { display:block; font-weight:500; color:#333; margin-bottom:6px; font-size:0.85rem; }
-        .form-group label i { color:#0a9396; width:18px; }
-        .form-group input { width:100%; padding:12px 14px; border:1px solid #ddd; border-radius:8px; font-size:0.9rem; transition:border-color 0.2s; box-sizing:border-box; }
-        .form-group input:focus { outline:none; border-color:#0a9396; box-shadow:0 0 0 3px rgba(10,147,150,0.1); }
-        .password-toggle { position:relative; }
-        .password-toggle input { padding-right:42px; }
-        .toggle-password { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#888; }
-        .btn-primary { width:100%; padding:12px; border:none; border-radius:8px; background:linear-gradient(135deg,#0a9396,#005f73); color:#fff; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
-        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(10,147,150,0.4); }
-        .btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-        .form-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
-        .checkbox-label { display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#666; cursor:pointer; }
-        .login-footer { text-align:center; margin-top:24px; padding-top:16px; border-top:1px solid #eee; }
-        .login-footer p { color:#888; font-size:0.75rem; margin:2px 0; }
-        .toast-container { position:fixed; top:20px; right:20px; z-index:9999; }
-        .toast { padding:12px 20px; border-radius:8px; margin-bottom:8px; color:#fff; font-size:0.9rem; display:flex; align-items:center; gap:10px; animation:slideIn 0.3s ease; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-        .toast-success { background:#10b981; }
-        .toast-error { background:#ef4444; }
-        @keyframes slideIn { from { transform:translateX(100%); opacity:0; } to { transform:translateX(0); opacity:1; } }
-    </style>
+<meta charset="UTF-8">
+<title>Login — RSRecharge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;background:#070b14;position:relative;perspective:1000px;overflow-x:hidden}
+body::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 50% 50%,rgba(14,165,233,0.15) 0%,rgba(7,11,20,0.85) 100%);z-index:0}
+.glow-card-wrapper{position:relative;border-radius:30px;padding:2px;background:linear-gradient(135deg,rgba(56,189,248,0.8),rgba(99,102,241,0.3),rgba(2,132,199,0.9),rgba(168,85,247,0.4));background-size:300% 300%;animation:neonGlow 6s ease infinite;box-shadow:0 0 25px rgba(56,189,248,0.35),0 0 50px rgba(2,132,199,0.2);transition:all 0.3s ease;z-index:1}
+.glow-card-wrapper:hover{box-shadow:0 0 35px rgba(56,189,248,0.6),0 0 70px rgba(99,102,241,0.4)}
+@keyframes neonGlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.container{background:rgba(15,23,42,0.82);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-radius:28px;width:700px;max-width:100%;min-height:420px;display:flex;overflow:hidden;position:relative}
+.form-container{width:50%;padding:36px 28px;display:flex;flex-direction:column;justify-content:center;background:rgba(255,255,255,0.015)}
+.form-container h1{font-size:24px;font-weight:800;margin-bottom:8px;text-align:center;color:#ffffff;letter-spacing:-0.5px}
+.social-icons{display:flex;justify-content:center;gap:8px;margin-bottom:12px}
+.social-icons a{border:1px solid rgba(255,255,255,0.14);border-radius:50%;display:flex;justify-content:center;align-items:center;width:34px;height:34px;color:#cbd5e1;text-decoration:none;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);transition:all 0.3s ease;font-size:13px}
+.social-icons a:hover{background:rgba(2,132,199,0.25);border-color:#38bdf8;color:#ffffff;transform:translateY(-2px);box-shadow:0 0 12px rgba(56,189,248,0.4)}
+.form-container>span{font-size:11.5px;text-align:center;margin-bottom:14px;color:#94a3b8;display:block;font-weight:500}
+.input-group{position:relative;margin-bottom:13px;background:rgba(15,23,42,0.6);border-radius:20px;border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(10px);transition:all 0.25s ease}
+.input-group:focus-within{background:rgba(15,23,42,0.85);border-color:rgba(56,189,248,0.8);box-shadow:0 0 12px rgba(56,189,248,0.3)}
+.input-group i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#38bdf8;font-size:13.5px}
+.form-container input{background:transparent;border:none;padding:11px 14px 11px 40px;width:100%;border-radius:20px;outline:none;font-size:12.5px;color:#ffffff;font-weight:500}
+.form-container input::placeholder{color:#64748b}
+.forgot-pass{color:#94a3b8;font-size:11.5px;text-decoration:none;margin-bottom:14px;text-align:center;display:block;font-weight:500;transition:color 0.2s ease}
+.forgot-pass:hover{color:#38bdf8}
+.btn-login{border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:linear-gradient(135deg,#0284c7 0%,#0369a1 100%);color:#ffffff;font-size:11.5px;font-weight:700;padding:11px;letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(2,132,199,0.4)}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(2,132,199,0.6);filter:brightness(1.1)}
+.overlay-container{width:50%;background:linear-gradient(135deg,rgba(15,23,42,0.8) 0%,rgba(8,14,28,0.95) 100%);backdrop-filter:blur(20px);color:#ffffff;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px 24px;border-top-left-radius:75px;border-bottom-left-radius:75px;position:relative;border-left:1px solid rgba(255,255,255,0.1)}
+.brand-logo-frame{display:inline-flex;align-items:center;justify-content:center;max-width:180px;max-height:85px;margin-bottom:16px;padding:8px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.35);backdrop-filter:blur(8px)}
+.brand-logo{max-width:100%;max-height:65px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4))}
+.overlay h1{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-0.3px}
+.overlay p{font-size:11.5px;line-height:1.55;color:#94a3b8;padding:0 6px}
+.alert{padding:8px 12px;border-radius:10px;margin-bottom:12px;font-size:11.5px;text-align:center;backdrop-filter:blur(6px)}
+.alert-danger{background:rgba(239,68,68,0.18);color:#fca5a5;border:1px solid rgba(239,68,68,0.3)}
+.support-text{font-size:11px;text-align:center;margin-top:14px;color:#94a3b8;letter-spacing:0.2px}
+.tab-switch{display:flex;justify-content:center;gap:16px;margin-bottom:18px}
+.tab-switch a{color:#64748b;font-size:12px;font-weight:600;text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab-switch a.active{color:#38bdf8;border-bottom-color:#38bdf8}
+#registerForm{display:none}
+@media(max-width:768px){.container{flex-direction:column;width:100%;border-radius:22px}.glow-card-wrapper{width:95%;border-radius:24px}.form-container,.overlay-container{width:100%}.overlay-container{border-radius:0;padding:30px 20px;border-left:none;border-top:1px solid rgba(255,255,255,0.1)}}
+</style>
 </head>
-<body class="login-page">
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-logo"><i class="fas fa-bolt"></i></div>
-                <h1>RSRecharge</h1>
-                <p>Multi Recharge & Bill Payment Platform</p>
-            </div>
-            <div class="login-tabs">
-                <button class="login-tab active" onclick="showTab('login')">Login</button>
-                <button class="login-tab" onclick="showTab('register')">Register</button>
-            </div>
-            <form id="loginForm" onsubmit="return handleLogin(event)">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Email / Mobile / User ID</label>
-                    <input type="text" id="loginId" placeholder="Enter email, mobile or user ID" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <div class="password-toggle">
-                        <input type="password" id="loginPass" placeholder="Enter password" required>
-                        <button type="button" class="toggle-password" onclick="togglePass('loginPass')"><i class="fas fa-eye"></i></button>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <label class="checkbox-label"><input type="checkbox"> Remember me</label>
-                </div>
-                <button type="submit" class="btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
-            </form>
-            <form id="registerForm" style="display:none" onsubmit="return handleRegister(event)">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Full Name</label>
-                    <input type="text" id="regName" placeholder="Enter full name" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-mobile-alt"></i> Mobile Number</label>
-                    <input type="tel" id="regMobile" placeholder="Enter 10-digit mobile" pattern="[0-9]{10}" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email (Optional)</label>
-                    <input type="email" id="regEmail" placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="regPass" placeholder="Create password (min 6 chars)" minlength="6" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Confirm Password</label>
-                    <input type="password" id="regPass2" placeholder="Confirm password" required>
-                </div>
-                <button type="submit" class="btn-primary" id="regBtn"><i class="fas fa-user-plus"></i> Register</button>
-            </form>
-            <div class="login-footer">
-                <p>&copy; 2026 RSRecharge.in | All Rights Reserved</p>
-            </div>
-        </div>
-    </div>
-    <div class="toast-container" id="toastBox"></div>
-    <script>
-        if (localStorage.getItem('token')) window.location.href = '/#dashboard';
+<body>
+<div class="glow-card-wrapper" id="tilt-card">
+<div class="container">
+<div class="form-container">
+<div class="tab-switch">
+<a href="#" id="tabLogin" class="active" onclick="showTab('login')">Sign In</a>
+<a href="#" id="tabRegister" onclick="showTab('register')">Sign Up</a>
+</div>
 
-        function showToast(msg, type) {
-            var t = document.createElement('div');
-            t.className = 'toast toast-' + (type || 'info');
-            t.innerHTML = '<span>' + msg + '</span>';
-            document.getElementById('toastBox').appendChild(t);
-            setTimeout(function() { t.remove(); }, 4000);
-        }
+<div id="loginForm">
+<h1>Welcome Back</h1>
+<span>Enter your credentials to access your account</span>
+<div id="loginError" class="alert alert-danger" style="display:none"></div>
+<form onsubmit="handleLogin(event)">
+<div class="input-group"><i class="bi bi-person-fill"></i><input type="text" id="loginEmail" placeholder="Username / Mobile / Email" required autofocus></div>
+<div class="input-group"><i class="bi bi-lock-fill"></i><input type="password" id="loginPassword" placeholder="Password" required></div>
+<a href="#" class="forgot-pass">Forgot Your Password?</a>
+<button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+</form>
+<p class="support-text">Need help? <span class="text-white fw-bold">+91 9641742208</span></p>
+</div>
 
-        function showTab(tab) {
-            document.querySelectorAll('.login-tab').forEach(function(t) { t.classList.remove('active'); });
-            event.target.classList.add('active');
-            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-        }
+<div id="registerForm">
+<h1>Create Account</h1>
+<span>Register as a new retailer or distributor</span>
+<div id="regError" class="alert alert-danger" style="display:none"></div>
+<form onsubmit="handleRegister(event)">
+<div class="input-group"><i class="bi bi-person-fill"></i><input type="text" id="regName" placeholder="Full Name" required></div>
+<div class="input-group"><i class="bi bi-envelope-fill"></i><input type="email" id="regEmail" placeholder="Email Address" required></div>
+<div class="input-group"><i class="bi bi-phone-fill"></i><input type="tel" id="regMobile" placeholder="Mobile Number" required></div>
+<div class="input-group"><i class="bi bi-lock-fill"></i><input type="password" id="regPassword" placeholder="Create Password" required></div>
+<div class="input-group"><i class="bi bi-person-badge-fill"></i><input type="text" id="regReferral" placeholder="Referral Code (Optional)"></div>
+<button type="submit" class="btn-login" id="regBtn">Create Account</button>
+</form>
+</div>
+</div>
 
-        function togglePass(id) {
-            var inp = document.getElementById(id);
-            var icon = inp.parentElement.querySelector('i');
-            if (inp.type === 'password') { inp.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
-            else { inp.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
-        }
+<div class="overlay-container">
+<div class="overlay">
+<div class="brand-logo-frame">
+<span style="font-size:2.5rem;font-weight:800;color:#38bdf8;line-height:1">&#9889;</span>
+</div>
+<h1>RSRecharge</h1>
+<p>Enter your credentials to securely access and manage your recharge terminal.</p>
+</div>
+</div>
+</div>
+</div>
 
-        async function api(url, opts) {
-            var res = await fetch('/api' + url, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts));
-            var data = await res.json();
-            if (!res.ok || !data.success) throw new Error(data.message || 'Request failed');
-            return data;
-        }
+<script>
+const card=document.getElementById('tilt-card');
+card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height/2;card.style.transform=`rotateX(${(y-cy)/28}deg) rotateY(${(cx-x)/28}deg)`});
+card.addEventListener('mouseleave',()=>{card.style.transform='rotateX(0) rotateY(0)'});
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            var btn = document.getElementById('loginBtn');
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            try {
-                var data = await api('/auth/login', { method: 'POST', body: JSON.stringify({ identifier: document.getElementById('loginId').value, password: document.getElementById('loginPass').value }) });
-                localStorage.setItem('token', data.data.token);
-                localStorage.setItem('user', JSON.stringify(data.data.user));
-                showToast('Login successful!', 'success');
-                setTimeout(function() { window.location.href = '/#dashboard'; }, 500);
-            } catch(err) {
-                showToast(err.message, 'error');
-                btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-            }
-        }
+function showTab(t){
+if(t==='login'){document.getElementById('loginForm').style.display='block';document.getElementById('registerForm').style.display='none';document.getElementById('tabLogin').classList.add('active');document.getElementById('tabRegister').classList.remove('active')}
+else{document.getElementById('loginForm').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('tabLogin').classList.remove('active');document.getElementById('tabRegister').classList.add('active')}
+}
 
-        async function handleRegister(e) {
-            e.preventDefault();
-            var pass = document.getElementById('regPass').value;
-            var pass2 = document.getElementById('regPass2').value;
-            if (pass !== pass2) { showToast('Passwords do not match', 'error'); return false; }
-            var btn = document.getElementById('regBtn');
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
-            try {
-                var data = await api('/auth/register', { method: 'POST', body: JSON.stringify({ name: document.getElementById('regName').value, mobile: document.getElementById('regMobile').value, email: document.getElementById('regEmail').value || undefined, password: pass }) });
-                showToast(data.message, 'success');
-                setTimeout(function() { showTab('login'); }, 1500);
-            } catch(err) { showToast(err.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
-        }
-    </script>
+function showError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block'}
+function hideError(id){document.getElementById(id).style.display='none'}
+
+async function handleLogin(e){
+e.preventDefault();hideError('loginError');
+const identifier=document.getElementById('loginEmail').value.trim();
+const password=document.getElementById('loginPassword').value.trim();
+const btn=document.getElementById('loginBtn');
+btn.textContent='Signing In...';btn.disabled=true;
+try{
+const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier,password})});
+const d=await r.json();
+if(d.success){localStorage.setItem('token',d.data.token);localStorage.setItem('user',JSON.stringify(d.data.user));window.location.href='/dashboard.html'}
+else{showError('loginError',d.message||'Invalid credentials');btn.textContent='Sign In';btn.disabled=false}
+}catch(err){showError('loginError','Connection failed. Retrying...');btn.textContent='Sign In';btn.disabled=false}
+}
+
+async function handleRegister(e){
+e.preventDefault();hideError('regError');
+const name=document.getElementById('regName').value.trim();
+const email=document.getElementById('regEmail').value.trim();
+const mobile=document.getElementById('regMobile').value.trim();
+const password=document.getElementById('regPassword').value.trim();
+const referral=document.getElementById('regReferral').value.trim();
+const btn=document.getElementById('regBtn');
+btn.textContent='Creating Account...';btn.disabled=true;
+try{
+const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,mobile,password,referred_by:referral||undefined,role:'RETAILER'})});
+const d=await r.json();
+if(d.success){showTab('login');showError('regError','');document.getElementById('loginError').className='alert alert-success';document.getElementById('loginError').textContent='Account created! Please sign in.';document.getElementById('loginError').style.display='block'}
+else{showError('regError',d.message||'Registration failed');btn.textContent='Create Account';btn.disabled=false}
+}catch(err){showError('regError','Connection failed. Retrying...');btn.textContent='Create Account';btn.disabled=false}
+}
+</script>
 </body>
 </html>

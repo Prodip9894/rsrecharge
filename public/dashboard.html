@@ -1,81 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSRecharge - Dashboard</title>
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:Arial,sans-serif; background:#f0f2f5; }
-        .topbar { background:#0d1b2a; color:#fff; padding:12px 24px; display:flex; justify-content:space-between; align-items:center; }
-        .topbar h2 { font-size:18px; }
-        .topbar button { background:#c00; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; }
-        .container { max-width:1200px; margin:20px auto; padding:0 20px; }
-        .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px; }
-        .stat { background:#fff; padding:20px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
-        .stat h3 { color:#666; font-size:13px; margin-bottom:8px; }
-        .stat p { font-size:24px; font-weight:700; color:#0d1b2a; }
-        .card { background:#fff; padding:20px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.08); margin-bottom:16px; }
-        .card h3 { margin-bottom:12px; color:#0d1b2a; }
-        .menu { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
-        .menu a { display:block; padding:16px; background:#f8f9fa; border-radius:8px; text-decoration:none; color:#333; text-align:center; font-size:14px; border:1px solid #eee; }
-        .menu a:hover { background:#0a9396; color:#fff; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — RSRecharge</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root{--bg:#070b14;--sidebar:#0a0f1a;--card:rgba(15,23,42,0.75);--border:rgba(255,255,255,0.08);--brand:#0d6efd;--glow:#0d6efd40;--text:#f1f5f9;--muted:#94a3b8}
+*{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--sidebar)}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+
+.sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:var(--sidebar);border-right:1px solid var(--border);z-index:1000;transition:transform 0.3s;display:flex;flex-direction:column}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-header .brand{font-weight:800;font-size:1.2rem;color:#38bdf8}
+.sidebar-header .brand-sub{font-size:.65rem;color:var(--muted);display:block;margin-top:2px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.nav-section{padding:8px 20px;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:all 0.2s;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover,.nav-item.active{background:rgba(56,189,248,0.08);color:#38bdf8;border-left-color:#38bdf8}
+.nav-item i{font-size:1.1rem;width:22px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-footer .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0d6efd,#38bdf8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff}
+.sidebar-footer .user-info{flex:1}
+.sidebar-footer .user-name{font-size:.8rem;font-weight:600;color:var(--text)}
+.sidebar-footer .user-role{font-size:.65rem;color:var(--muted)}
+
+.main{margin-left:260px;min-height:100vh}
+.topbar{background:rgba(7,11,20,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.page-title{font-size:1.1rem;font-weight:700}
+.content{padding:24px 28px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(8px);transition:all 0.3s}
+.stat-card:hover{border-color:rgba(56,189,248,0.3);transform:translateY(-2px)}
+.stat-card .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
+.stat-card .value{font-size:1.6rem;font-weight:800;color:#38bdf8}
+.stat-card .sub{font-size:.7rem;color:var(--muted);margin-top:4px}
+.stat-card.green .value{color:#22c55e}
+.stat-card.yellow .value{color:#eab308}
+.stat-card.red .value{color:#ef4444}
+.stat-card.purple .value{color:#a855f7}
+
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;transition:all 0.3s;cursor:pointer;text-decoration:none;color:inherit}
+.service-card:hover{border-color:rgba(56,189,248,0.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
+.service-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px}
+.service-icon.blue{background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.25)}
+.service-icon.green{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.service-icon.purple{background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.25)}
+.service-icon.yellow{background:rgba(234,179,8,0.12);color:#eab308;border:1px solid rgba(234,179,8,0.25)}
+.service-icon.red{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
+.service-icon.cyan{background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.25)}
+.service-card h5{font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:4px}
+.service-card p{font-size:.72rem;color:var(--muted);margin:0;line-height:1.5}
+
+.modal-content{background:var(--sidebar);border:1px solid var(--border);border-radius:20px}
+.modal-header{border-bottom:1px solid var(--border);padding:18px 24px}
+.modal-title{font-weight:700;font-size:1rem}
+.btn-close{filter:invert(1)}
+.modal-body{padding:24px}
+.modal-footer{border-top:1px solid var(--border);padding:14px 24px}
+.form-label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-control,.form-select{background:rgba(15,23,42,0.6);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:11px 14px;font-size:.85rem;transition:all 0.2s}
+.form-control:focus,.form-select:focus{background:rgba(15,23,42,0.85);border-color:rgba(56,189,248,0.6);box-shadow:0 0 0 3px rgba(56,189,248,0.15);color:var(--text)}
+.form-select option{background:var(--sidebar);color:var(--text)}
+.btn-brand{background:linear-gradient(135deg,var(--brand),#1d4ed8);color:#fff;font-weight:700;border-radius:12px;padding:11px 24px;border:none;box-shadow:0 4px 16px var(--glow);transition:all 0.3s}
+.btn-brand:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--glow);filter:brightness(1.1)}
+.btn-outline-brand{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:12px;padding:11px 24px;font-weight:600;transition:all 0.2s}
+.btn-outline-brand:hover{border-color:rgba(56,189,248,0.4);color:#38bdf8}
+
+.table-container{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.table-container .table{margin:0;color:var(--text)}
+.table-container .table th{background:rgba(15,23,42,0.6);font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);padding:12px 16px}
+.table-container .table td{font-size:.8rem;border-bottom:1px solid var(--border);padding:12px 16px;vertical-align:middle}
+.table-container .table tr:hover td{background:rgba(56,189,248,0.03)}
+
+.badge-success{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
+.badge-pending{background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
+.badge-failed{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
+
+.page{display:none}
+.page.active{display:block}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state i{font-size:3rem;margin-bottom:16px;opacity:.4}
+
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:999}
+@media(max-width:992px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.sidebar-overlay.open{display:block}
+.main{margin-left:0}
+}
+
+.notification-badge{position:relative}
+.notification-badge::after{content:attr(data-count);position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:.55rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;display:none}
+</style>
 </head>
 <body>
-    <div class="topbar">
-        <h2>&#9889; RSRecharge</h2>
-        <div>
-            <span id="userName" style="margin-right:16px"></span>
-            <button onclick="logout()">Logout</button>
-        </div>
-    </div>
-    <div class="container">
-        <div class="stats" id="stats"></div>
-        <div class="card">
-            <h3>Services</h3>
-            <div class="menu">
-                <a href="#">Mobile Recharge</a>
-                <a href="#">DTH Recharge</a>
-                <a href="#">Bill Payment</a>
-                <a href="#">AEPS</a>
-                <a href="#">Money Transfer</a>
-                <a href="#">Wallet</a>
-                <a href="#">Transactions</a>
-                <a href="#">Notifications</a>
-            </div>
-        </div>
-    </div>
-    <script>
-        var user = null;
-        var token = localStorage.getItem('token');
-        try { user = JSON.parse(localStorage.getItem('user')); } catch(e) {}
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div>
+<span class="brand">&#9889; RSRecharge</span>
+<span class="brand-sub">Multi-Recharge Platform</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section">Main</div>
+<a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')"><i class="bi bi-grid-fill"></i> Dashboard</a>
+<div class="nav-section">Services</div>
+<a class="nav-item" data-page="recharge" onclick="showPage('recharge')"><i class="bi bi-phone-fill"></i> Mobile Recharge</a>
+<a class="nav-item" data-page="dth" onclick="showPage('dth')"><i class="bi bi-tv-fill"></i> DTH Recharge</a>
+<a class="nav-item" data-page="billpay" onclick="showPage('billpay')"><i class="bi bi-receipt-cutoff"></i> Bill Payment</a>
+<a class="nav-item" data-page="aeps" onclick="showPage('aeps')"><i class="bi bi-fingerprint"></i> AEPS Cash</a>
+<a class="nav-item" data-page="dmt" onclick="showPage('dmt')"><i class="bi bi-bank"></i> Money Transfer</a>
+<div class="nav-section">Wallet</div>
+<a class="nav-item" data-page="wallet" onclick="showPage('wallet')"><i class="bi bi-wallet2"></i> My Wallet</a>
+<a class="nav-item" data-page="addmoney" onclick="showPage('addmoney')"><i class="bi bi-qr-code-scan"></i> Add Money (UPI)</a>
+<a class="nav-item" data-page="movetobank" onclick="showPage('movetobank')"><i class="bi bi-arrow-down-up"></i> Move to Bank</a>
+<div class="nav-section">Records</div>
+<a class="nav-item" data-page="transactions" onclick="showPage('transactions')"><i class="bi bi-clock-history"></i> Transactions</a>
+<a class="nav-item" data-page="ledger" onclick="showPage('ledger')"><i class="bi bi-journal-text"></i> Ledger</a>
+<a class="nav-item" data-page="downline" onclick="showPage('downline')"><i class="bi bi-people-fill"></i> Downline Users</a>
+<div class="nav-section">Account</div>
+<a class="nav-item" data-page="profile" onclick="showPage('profile')"><i class="bi bi-person-circle"></i> Profile</a>
+<a class="nav-item" data-page="settings" onclick="showPage('settings')"><i class="bi bi-gear-fill"></i> Settings</a>
+<a class="nav-item" onclick="handleLogout()" style="color:#ef4444"><i class="bi bi-box-arrow-left"></i> Logout</a>
+</nav>
+<div class="sidebar-footer">
+<div class="avatar" id="userAvatar">A</div>
+<div class="user-info">
+<div class="user-name" id="userName">Admin</div>
+<div class="user-role" id="userRole">Administrator</div>
+</div>
+</div>
+</aside>
 
-        if (!token || !user) { window.location.href = '/'; }
+<main class="main">
+<header class="topbar">
+<div class="topbar-left">
+<button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="toggleSidebar()"><i class="bi bi-list fs-5"></i></button>
+<h5 class="page-title mb-0" id="pageTitle">Dashboard</h5>
+</div>
+<div class="topbar-right">
+<span class="text-secondary small d-none d-md-inline" id="topbarBalance">Balance: <strong class="text-success" id="topBalance">₹0.00</strong></span>
+<div class="notification-badge" id="notifBadge"><i class="bi bi-bell fs-5 text-secondary" style="cursor:pointer" onclick="showPage('notifications')"></i></div>
+</div>
+</header>
 
-        document.getElementById('userName').textContent = user ? (user.name + ' (' + user.role + ')') : '';
+<div class="content">
 
-        if (user && user.role === 'admin') {
-            document.getElementById('stats').innerHTML = '<div class="stat"><h3>Total Users</h3><p id="s1">...</p></div><div class="stat"><h3>Today Transactions</h3><p id="s2">...</p></div><div class="stat"><h3>Wallet Balance</h3><p id="s3">...</p></div><div class="stat"><h3>Revenue</h3><p id="s4">...</p></div>';
-            fetch('/api/dashboard', { headers: { 'Authorization': 'Bearer ' + token } })
-                .then(function(r) { return r.json(); })
-                .then(function(d) {
-                    if (d.success && d.data) {
-                        document.getElementById('s1').textContent = d.data.totalUsers || 0;
-                        document.getElementById('s2').textContent = d.data.todayTransactions || 0;
-                        document.getElementById('s3').textContent = '\u20B9' + (d.data.totalWalletBalance || 0);
-                        document.getElementById('s4').textContent = '\u20B9' + (d.data.todayRevenue || 0);
-                    }
-                }).catch(function() {});
-        } else {
-            document.getElementById('stats').innerHTML = '<div class="stat"><h3>Wallet Balance</h3><p>...</p></div><div class="stat"><h3>Today Recharges</h3><p>0</p></div>';
-        }
+<!-- DASHBOARD PAGE -->
+<div class="page active" id="page-dashboard">
+<div class="stat-grid" id="statGrid">
+<div class="stat-card"><div class="label">Wallet Balance</div><div class="value" id="sBalance">₹0.00</div><div class="sub">Available for transactions</div></div>
+<div class="stat-card green"><div class="label">Total Recharges</div><div class="value" id="sRecharges">0</div><div class="sub">All time successful</div></div>
+<div class="stat-card purple"><div class="label">Total Commissions</div><div class="value" id="sCommission">₹0.00</div><div class="sub">Earned to date</div></div>
+<div class="stat-card yellow"><div class="label">Pending TXN</div><div class="value" id="sPending">0</div><div class="sub">Awaiting confirmation</div></div>
+</div>
+<div class="row g-4 mb-4">
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('recharge')"><div class="service-icon blue"><i class="bi bi-phone-fill"></i></div><h5>Mobile Recharge</h5><p>Prepaid & Postpaid instant recharge</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('dth')"><div class="service-icon purple"><i class="bi bi-tv-fill"></i></div><h5>DTH Recharge</h5><p>All DTH operators supported</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('billpay')"><div class="service-icon green"><i class="bi bi-receipt-cutoff"></i></div><h5>Bill Payment</h5><p>Electricity, Gas, Water, Broadband</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('aeps')"><div class="service-icon yellow"><i class="bi bi-fingerprint"></i></div><h5>AEPS Cash</h5><p>Aadhaar cash withdrawal & balance</p></a></div>
+</div>
+<div class="row g-4 mb-4">
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('dmt')"><div class="service-icon red"><i class="bi bi-bank"></i></div><h5>Money Transfer</h5><p>IMPS / NEFT instant transfer</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('addmoney')"><div class="service-icon cyan"><i class="bi bi-qr-code-scan"></i></div><h5>Add Money</h5><p>UPI auto wallet loading</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('movetobank')"><div class="service-icon blue"><i class="bi bi-arrow-down-up"></i></div><h5>Move to Bank</h5><p>Withdraw to linked bank</p></a></div>
+<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('transactions')"><div class="service-icon green"><i class="bi bi-clock-history"></i></div><h5>Transactions</h5><p>View complete history</p></a></div>
+</div>
+<div class="table-container">
+<div class="p-3 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25">
+<h6 class="fw-bold mb-0">Recent Transactions</h6>
+<button class="btn btn-sm btn-outline-secondary" onclick="showPage('transactions')">View All</button>
+</div>
+<div class="table-responsive">
+<table class="table">
+<thead><tr><th>Date</th><th>Number</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody id="recentTxnBody"><tr><td colspan="5" class="text-center text-secondary py-4">No transactions yet</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
 
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/';
-        }
-    </script>
+<!-- MOBILE RECHARGE PAGE -->
+<div class="page" id="page-recharge">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-phone-fill text-primary me-2"></i>Mobile Recharge</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Mobile Number</label><input type="tel" class="form-control" id="rcMobile" placeholder="Enter 10-digit number" maxlength="10"></div>
+<div class="col-md-6"><label class="form-label">Operator</label><select class="form-select" id="rcOperator"><option>Jio</option><option>Airtel</option><option>Vi (Vodafone Idea)</option><option>BSNL</option><option>MTNL</option></select></div>
+<div class="col-md-6"><label class="form-label">Circle</label><select class="form-select" id="rcCircle"><option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Chennai</option><option>Delhi</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jammu & Kashmir</option><option>Karnataka</option><option>Kerala</option><option>Kolkata</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Mumbai</option><option>North East</option><option>Orissa</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>UP East</option><option>UP West</option><option>West Bengal</option></select></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="rcAmount" placeholder="Enter amount" min="1"></div>
+<div class="col-12"><div id="rcResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doRecharge()"><i class="bi bi-lightning-fill me-1"></i> Recharge Now</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- DTH PAGE -->
+<div class="page" id="page-dth">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-tv-fill text-purple me-2" style="color:#a855f7"></i>DTH Recharge</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Customer ID / Number</label><input type="text" class="form-control" id="dthId" placeholder="Enter DTH ID"></div>
+<div class="col-md-6"><label class="form-label">Operator</label><select class="form-select" id="dthOperator"><option>Tata Play</option><option>Airtel Digital TV</option><option>Dish TV</option><option>Sun Direct</option><option>Videocon D2H</option></select></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="dthAmount" placeholder="Enter amount" min="1"></div>
+<div class="col-12"><div id="dthResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doDTH()"><i class="bi bi-lightning-fill me-1"></i> Recharge DTH</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- BILL PAY PAGE -->
+<div class="page" id="page-billpay">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-receipt-cutoff text-success me-2"></i>Bill Payment</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Bill Type</label><select class="form-select" id="bpType"><option>Electricity</option><option>Gas</option><option>Water</option><option>Broadband</option><option>Landline</option><option>Insurance</option><option>Loan EMI</option></select></div>
+<div class="col-md-6"><label class="form-label">Provider</label><input type="text" class="form-control" id="bpProvider" placeholder="e.g. BESCOM, JIO"></div>
+<div class="col-md-6"><label class="form-label">Consumer / Account Number</label><input type="text" class="form-control" id="bpAccount" placeholder="Enter account number"></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="bpAmount" placeholder="Enter amount" min="1"></div>
+<div class="col-12"><div id="bpResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doBillPay()"><i class="bi bi-lightning-fill me-1"></i> Pay Bill</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- AEPS PAGE -->
+<div class="page" id="page-aeps">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-fingerprint text-warning me-2"></i>AEPS Cash Withdrawal / Balance</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Transaction Type</label><select class="form-select" id="aepsType"><option value="WITHDRAWAL">Cash Withdrawal</option><option value="BALANCE_ENQ">Balance Enquiry</option><option value="MINI_STATEMENT">Mini Statement</option></select></div>
+<div class="col-md-6"><label class="form-label">Aadhaar Number</label><input type="tel" class="form-control" id="aepsAadhaar" placeholder="12-digit Aadhaar" maxlength="12"></div>
+<div class="col-md-6"><label class="form-label">Bank Name</label><select class="form-select" id="aepsBank"><option>SBI</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Punjab National Bank</option><option>Bank of Baroda</option><option>Canara Bank</option><option>Union Bank</option><option>Other</option></select></div>
+<div class="col-md-6"><label class="form-label">Amount (₹) — for withdrawal</label><input type="number" class="form-control" id="aepsAmount" placeholder="Enter amount" min="100"></div>
+<div class="col-12"><label class="form-label">Mobile Number</label><input type="tel" class="form-control" id="aepsMobile" placeholder="10-digit mobile" maxlength="10"></div>
+<div class="col-12"><div id="aepsResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doAEPS()"><i class="bi bi-lightning-fill me-1"></i> Process AEPS</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- DMT PAGE -->
+<div class="page" id="page-dmt">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-bank text-danger me-2"></i>Money Transfer (DMT)</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Sender Mobile</label><input type="tel" class="form-control" id="dmtSenderMobile" placeholder="Sender's 10-digit mobile" maxlength="10"></div>
+<div class="col-md-6"><label class="form-label">Sender Name</label><input type="text" class="form-control" id="dmtSenderName" placeholder="Full name"></div>
+<div class="col-md-6"><label class="form-label">Sender Aadhaar / PAN</label><input type="text" class="form-control" id="dmtSenderId" placeholder="ID number"></div>
+<div class="col-12"><hr class="border-secondary border-opacity-25"><p class="text-secondary small fw-bold">BENEFICIARY DETAILS</p></div>
+<div class="col-md-6"><label class="form-label">Beneficiary Name</label><input type="text" class="form-control" id="dmtBenName" placeholder="Recipient name"></div>
+<div class="col-md-6"><label class="form-label">Beneficiary Mobile</label><input type="tel" class="form-control" id="dmtBenMobile" placeholder="10-digit mobile" maxlength="10"></div>
+<div class="col-md-6"><label class="form-label">Bank Account</label><input type="text" class="form-control" id="dmtBenAccount" placeholder="Account number"></div>
+<div class="col-md-6"><label class="form-label">IFSC Code</label><input type="text" class="form-control" id="dmtBenIfsc" placeholder="e.g. SBIN0001234"></div>
+<div class="col-md-6"><label class="form-label">Transfer Mode</label><select class="form-select" id="dmtMode"><option value="IMPS">IMPS (Instant)</option><option value="NEFT">NEFT</option><option value="RTGS">RTGS</option></select></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="dmtAmount" placeholder="Enter amount" min="100"></div>
+<div class="col-12"><div id="dmtResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doDMT()"><i class="bi bi-lightning-fill me-1"></i> Send Money</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ADD MONEY PAGE -->
+<div class="page" id="page-addmoney">
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<div class="stat-card text-center">
+<h6 class="fw-bold mb-4"><i class="bi bi-qr-code-scan text-info me-2"></i>Add Money via UPI</h6>
+<div style="background:#fff;border-radius:16px;padding:24px;display:inline-block;margin-bottom:20px">
+<div style="width:200px;height:200px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center" id="qrCode">
+<span class="text-secondary small">QR Code</span>
+</div>
+</div>
+<p class="text-secondary small mb-3">Scan this QR with any UPI app to add money to your wallet</p>
+<div class="input-group mb-3"><span class="input-group-text bg-transparent border-secondary border-opacity-25 text-info">₹</span><input type="number" class="form-control" id="addAmount" placeholder="Or enter amount to generate dynamic QR" min="10"></div>
+<button class="btn btn-brand w-100" onclick="generateQR()"><i class="bi bi-qr-code me-1"></i> Generate Dynamic QR</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- MOVE TO BANK PAGE -->
+<div class="page" id="page-movetobank">
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-arrow-down-up text-primary me-2"></i>Move to Bank</h6>
+<div class="text-center mb-4">
+<div class="text-secondary small mb-1">Available Balance</div>
+<div class="fw-bold text-success" style="font-size:1.8rem" id="mtbBalance">₹0.00</div>
+</div>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="mtbAmount" placeholder="Enter amount to withdraw" min="100"></div>
+<div class="col-md-6"><label class="form-label">Bank Name</label><input type="text" class="form-control" id="mtbBankName" placeholder="e.g. SBI, HDFC"></div>
+<div class="col-md-6"><label class="form-label">Account Holder Name</label><input type="text" class="form-control" id="mtbHolderName" placeholder="Name on bank account"></div>
+<div class="col-md-6"><label class="form-label">Account Number</label><input type="text" class="form-control" id="mtbAccount" placeholder="Full account number"></div>
+<div class="col-md-6"><label class="form-label">IFSC Code</label><input type="text" class="form-control" id="mtbIfsc" placeholder="e.g. SBIN0001234"></div>
+<div class="col-12"><div id="mtbResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand w-100" onclick="doMoveToBank()"><i class="bi bi-lightning-fill me-1"></i> Withdraw Now</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- TRANSACTIONS PAGE -->
+<div class="page" id="page-transactions">
+<div class="stat-card">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Transaction History</h6>
+<div class="d-flex gap-2">
+<select class="form-select form-select-sm" style="width:auto" id="txnFilter" onchange="loadTransactions()">
+<option value="">All Types</option><option value="RECHARGE">Recharge</option><option value="DTH">DTH</option><option value="BILL_PAY">Bill Pay</option><option value="AEPS">AEPS</option><option value="DMT">DMT</option><option value="ADD_MONEY">Add Money</option><option value="MOVE_BANK">Move to Bank</option>
+</select>
+<select class="form-select form-select-sm" style="width:auto" id="txnStatus" onchange="loadTransactions()">
+<option value="">All Status</option><option value="SUCCESS">Success</option><option value="PENDING">Pending</option><option value="FAILED">Failed</option>
+</select>
+</div>
+</div>
+<div class="table-responsive">
+<table class="table">
+<thead><tr><th>Date</th><th>Type</th><th>Number / ID</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody id="txnTableBody"><tr><td colspan="6" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- LEDGER PAGE -->
+<div class="page" id="page-ledger">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-journal-text text-primary me-2"></i>Wallet Ledger</h6>
+<div class="table-responsive">
+<table class="table">
+<thead><tr><th>Date</th><th>Description</th><th>Debit (₹)</th><th>Credit (₹)</th><th>Balance (₹)</th></tr></thead>
+<tbody id="ledgerBody"><tr><td colspan="5" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- DOWNLINE PAGE -->
+<div class="page" id="page-downline">
+<div class="stat-card">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0"><i class="bi bi-people-fill text-primary me-2"></i>Downline Users</h6>
+<button class="btn btn-sm btn-brand" onclick="openModal('addUserModal')"><i class="bi bi-plus-lg me-1"></i> Add User</button>
+</div>
+<div class="table-responsive">
+<table class="table">
+<thead><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="downlineBody"><tr><td colspan="6" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div class="page" id="page-profile">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-person-circle text-primary me-2"></i>My Profile</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Full Name</label><input type="text" class="form-control" id="profName"></div>
+<div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="profEmail"></div>
+<div class="col-md-6"><label class="form-label">Mobile</label><input type="tel" class="form-control" id="profMobile"></div>
+<div class="col-md-6"><label class="form-label">Role</label><input type="text" class="form-control" id="profRole" disabled></div>
+<div class="col-md-6"><label class="form-label">Referral Code</label><input type="text" class="form-control" id="profReferral" disabled></div>
+<div class="col-12"><div id="profResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveProfile()">Save Changes</button></div>
+</div>
+</div>
+<div class="stat-card mt-4">
+<h6 class="fw-bold mb-3">Change Password</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Current Password</label><input type="password" class="form-control" id="pwCurrent"></div>
+<div class="col-md-6"><label class="form-label">New Password</label><input type="password" class="form-control" id="pwNew"></div>
+<div class="col-md-6"><label class="form-label">Confirm Password</label><input type="password" class="form-control" id="pwConfirm"></div>
+<div class="col-12"><div id="pwResult" class="alert d-none" style="border-radius:12px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="changePassword()">Update Password</button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page" id="page-settings">
+<div class="row justify-content-center">
+<div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-gear-fill text-primary me-2"></i>Settings</h6>
+<div class="d-flex flex-column gap-3">
+<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">Email Notifications</strong><small class="text-secondary">Receive transaction alerts via email</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
+<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">SMS Notifications</strong><small class="text-secondary">Get SMS for wallet updates</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
+<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">2FA Security</strong><small class="text-secondary">Two-factor authentication on login</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- NOTIFICATIONS PAGE -->
+<div class="page" id="page-notifications">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-bell-fill text-primary me-2"></i>Notifications</h6>
+<div id="notifList"><div class="empty-state"><i class="bi bi-bell-slash"></i><p>No notifications yet</p></div></div>
+</div>
+</div>
+
+</div>
+</main>
+
+<!-- ADD USER MODAL -->
+<div class="modal fade" id="addUserModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add Downline User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Full Name</label><input type="text" class="form-control" id="newUserName"></div>
+<div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="newUserEmail"></div>
+<div class="col-md-6"><label class="form-label">Mobile</label><input type="tel" class="form-control" id="newUserMobile" maxlength="10"></div>
+<div class="col-md-6"><label class="form-label">Password</label><input type="password" class="form-control" id="newUserPassword"></div>
+<div class="col-md-6"><label class="form-label">Role</label><select class="form-select" id="newUserRole"><option value="RETAILER">Retailer</option><option value="DISTRIBUTOR">Distributor</option><option value="MASTER_DISTRIBUTOR">Master Distributor</option></select></div>
+</div>
+</div>
+<div class="modal-footer"><button class="btn btn-outline-brand" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="addUser()">Create User</button></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API='/api';
+const token=()=>localStorage.getItem('token');
+const user=()=>{try{return JSON.parse(localStorage.getItem('user'))}catch{return null}};
+const headers=()=>({'Content-Type':'application/json','Authorization':`Bearer ${token()}`});
+const u=user();
+if(!u||!token()){window.location.href='/login.html'}
+document.getElementById('userName').textContent=u?.name||'User';
+document.getElementById('userRole').textContent=(u?.role||'').replace(/_/g,' ');
+document.getElementById('userAvatar').textContent=(u?.name||'U')[0].toUpperCase();
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function openModal(id){new bootstrap.Modal(document.getElementById(id)).show()}
+
+function showPage(p){
+document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+const page=document.getElementById('page-'+p);
+if(page){page.classList.add('active');document.querySelector(`[data-page="${p}"]`)?.classList.add('active')}
+const titles={dashboard:'Dashboard',recharge:'Mobile Recharge',dth:'DTH Recharge',billpay:'Bill Payment',aeps:'AEPS Cash',dmt:'Money Transfer',wallet:'My Wallet',addmoney:'Add Money (UPI)',movetobank:'Move to Bank',transactions:'Transaction History',ledger:'Wallet Ledger',downline:'Downline Users',profile:'Profile',settings:'Settings',notifications:'Notifications'};
+document.getElementById('pageTitle').textContent=titles[p]||'Dashboard';
+if(p==='transactions')loadTransactions();
+if(p==='ledger')loadLedger();
+if(p==='downline')loadDownline();
+if(p==='profile')loadProfile();
+if(p==='dashboard')loadDashboard();
+if(p==='movetobank')document.getElementById('mtbBalance').textContent=document.getElementById('sBalance')?.textContent||'₹0.00';
+if(window.innerWidth<992)toggleSidebar();
+}
+
+async function apiFetch(path,opts={}){
+try{const r=await fetch(API+path,{...opts,headers:headers()});
+if(r.status===401){localStorage.clear();window.location.href='/login.html';return null}
+return await r.json()}catch(e){console.error(e);return null}
+}
+
+function showResult(id,msg,type='success'){
+const el=document.getElementById(id);if(!el)return;
+el.className='alert';el.classList.add(type==='success'?'alert-success':'alert-danger');
+el.style.background=type==='success'?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)';
+el.style.color=type==='success'?'#22c55e':'#fca5a5';
+el.style.border=`1px solid ${type==='success'?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`;
+el.textContent=msg;el.classList.remove('d-none');
+if(type==='success')setTimeout(()=>el.classList.add('d-none'),5000);
+}
+
+function renderTxnRow(t){
+const statusClass=t.status==='SUCCESS'?'badge-success':t.status==='PENDING'?'badge-pending':'badge-failed';
+return `<tr><td class="text-nowrap">${new Date(t.created_at).toLocaleDateString('en-IN')}</td><td>${t.type||'-'}</td><td>${t.reference_id||t.number||'-'}</td><td>${t.operator||'-'}</td><td>₹${Number(t.amount).toFixed(2)}</td><td><span class="${statusClass}">${t.status}</span></td></tr>`;
+}
+
+async function loadDashboard(){
+const d=await apiFetch('/dashboard');
+if(!d||!d.success)return;
+const s=d.data;
+const isAdmin=u?.role==='admin'||u?.role==='superadmin';
+const balance=isAdmin?s.totalWalletBalance:s.walletBalance;
+document.getElementById('sBalance').textContent='₹'+Number(balance||0).toFixed(2);
+document.getElementById('sRecharges').textContent=isAdmin?s.todayTransactions:s.todaySuccess||s.todayRecharges||0;
+document.getElementById('sCommission').textContent='₹'+Number(s.todayCommission||0).toFixed(2);
+document.getElementById('sPending').textContent=isAdmin?s.pendingApprovals:s.todayPending||0;
+document.getElementById('topBalance').textContent='₹'+Number(balance||0).toFixed(2);
+const txns=s.recentTransactions||s.recentTransactions||[];
+const tbody=document.getElementById('recentTxnBody');
+if(txns.length)tbody.innerHTML=txns.slice(0,5).map(renderTxnRow).join('');
+}
+
+async function loadTransactions(){
+const filter=document.getElementById('txnFilter').value;
+const status=document.getElementById('txnStatus').value;
+let qs=new URLSearchParams();if(filter)qs.set('type',filter);if(status)qs.set('status',status);
+const d=await apiFetch('/transactions?'+qs);
+if(!d||!d.success)return;
+const txns=d.data?.transactions||d.data||[];
+document.getElementById('txnTableBody').innerHTML=txns.length?txns.map(renderTxnRow).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No transactions found</td></tr>';
+}
+
+async function loadLedger(){
+const d=await apiFetch('/wallet/transactions');
+if(!d||!d.success)return;
+const entries=d.data?.transactions||d.data||[];
+document.getElementById('ledgerBody').innerHTML=entries.length?entries.map(e=>`<tr><td>${new Date(e.created_at).toLocaleDateString('en-IN')}</td><td>${e.description||e.type||e.reference_id||'-'}</td><td class="text-danger">${['DEBIT','WITHDRAWAL','RECHARGE','DTH','BILL_PAY','DMT','MOVE_BANK'].includes(e.type)?'₹'+Number(e.amount).toFixed(2):''}</td><td class="text-success">${['CREDIT','ADD_MONEY','COMMISSION','REFUND'].includes(e.type)?'₹'+Number(e.amount).toFixed(2):''}</td><td>₹${Number(e.balance_after||0).toFixed(2)}</td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-secondary py-4">No ledger entries</td></tr>';
+}
+
+async function loadDownline(){
+const d=await apiFetch('/users/downline');
+if(!d||!d.success)return;
+const users=Array.isArray(d.data)?d.data:(d.data?.users||[]);
+document.getElementById('downlineBody').innerHTML=users.length?users.map(u=>`<tr><td>${u.name}</td><td>${u.mobile||'-'}</td><td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="padding:4px 10px;border-radius:8px;font-size:.7rem">${(u.role||'').replace(/_/g,' ')}</span></td><td>₹${Number(u.balance||0).toFixed(2)}</td><td><span class="${u.is_active?'badge-success':'badge-failed'}">${u.is_active?'Active':'Inactive'}</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="viewUser(${u.id})"><i class="bi bi-eye"></i></button></td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No downline users</td></tr>';
+}
+
+async function loadProfile(){
+const d=await apiFetch('/auth/me');
+if(!d||!d.success)return;
+const p=d.data;
+document.getElementById('profName').value=p.name||'';
+document.getElementById('profEmail').value=p.email||'';
+document.getElementById('profMobile').value=p.mobile||'';
+document.getElementById('profRole').value=(p.role||'').replace(/_/g,' ');
+document.getElementById('profReferral').value=p.referral_code||p.user_id||'';
+}
+
+async function saveProfile(){
+const d=await apiFetch('/auth/profile',{method:'PUT',body:JSON.stringify({name:document.getElementById('profName').value,email:document.getElementById('profEmail').value})});
+showResult('profResult',d?.success?'Profile updated successfully':(d?.message||'Update failed'),d?.success?'success':'error');
+}
+
+async function changePassword(){
+const nw=document.getElementById('pwNew').value;
+const cf=document.getElementById('pwConfirm').value;
+if(nw!==cf){showResult('pwResult','Passwords do not match','error');return}
+const d=await apiFetch('/auth/change-password',{method:'POST',body:JSON.stringify({current_password:document.getElementById('pwCurrent').value,new_password:nw})});
+showResult('pwResult',d?.success?'Password changed successfully':(d?.message||'Update failed'),d?.success?'success':'error');
+}
+
+async function addUser(){
+const d=await apiFetch('/admin/users',{method:'POST',body:JSON.stringify({name:document.getElementById('newUserName').value,email:document.getElementById('newUserEmail').value,mobile:document.getElementById('newUserMobile').value,password:document.getElementById('newUserPassword').value,role:document.getElementById('newUserRole').value})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();loadDownline()}
+else{alert(d?.message||'Failed to create user')}
+}
+
+async function doRecharge(){
+const d=await apiFetch('/services/mobile-recharge',{method:'POST',body:JSON.stringify({mobile_number:document.getElementById('rcMobile').value,operator:document.getElementById('rcOperator').value,circle:document.getElementById('rcCircle').value,amount:parseFloat(document.getElementById('rcAmount').value)})});
+showResult('rcResult',d?.success?`Recharge successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Recharge failed'),d?.success?'success':'error');
+if(d?.success)loadDashboard();
+}
+
+async function doDTH(){
+const d=await apiFetch('/services/dth-recharge',{method:'POST',body:JSON.stringify({customer_id:document.getElementById('dthId').value,operator:document.getElementById('dthOperator').value,amount:parseFloat(document.getElementById('dthAmount').value)})});
+showResult('dthResult',d?.success?`DTH Recharge successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Recharge failed'),d?.success?'success':'error');
+}
+
+async function doBillPay(){
+const d=await apiFetch('/services/bill-payment',{method:'POST',body:JSON.stringify({bill_type:document.getElementById('bpType').value,provider:document.getElementById('bpProvider').value,account_number:document.getElementById('bpAccount').value,amount:parseFloat(document.getElementById('bpAmount').value)})});
+showResult('bpResult',d?.success?`Bill payment successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Payment failed'),d?.success?'success':'error');
+}
+
+async function doAEPS(){
+const type=document.getElementById('aepsType').value;
+const endpoints={WITHDRAWAL:'aeps/withdraw',BALANCE_ENQ:'aeps/balance-enquiry',MINI_STATEMENT:'aeps/mini-statement'};
+const d=await apiFetch('/'+(endpoints[type]||'aeps/deposit'),{method:'POST',body:JSON.stringify({aadhaar:document.getElementById('aepsAadhaar').value,bank_name:document.getElementById('aepsBank').value,amount:parseFloat(document.getElementById('aepsAmount').value||0),mobile:document.getElementById('aepsMobile').value})});
+showResult('aepsResult',d?.success?`AEPS ${type} successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'AEPS failed'),d?.success?'success':'error');
+}
+
+async function doDMT(){
+const d=await apiFetch('/dmt/send-money',{method:'POST',body:JSON.stringify({sender_mobile:document.getElementById('dmtSenderMobile').value,sender_name:document.getElementById('dmtSenderName').value,sender_id_proof:document.getElementById('dmtSenderId').value,beneficiary_name:document.getElementById('dmtBenName').value,beneficiary_mobile:document.getElementById('dmtBenMobile').value,beneficiary_account:document.getElementById('dmtBenAccount').value,beneficiary_ifsc:document.getElementById('dmtBenIfsc').value,transfer_mode:document.getElementById('dmtMode').value,amount:parseFloat(document.getElementById('dmtAmount').value)})});
+showResult('dmtResult',d?.success?`Transfer successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Transfer failed'),d?.success?'success':'error');
+}
+
+function generateQR(){
+const amt=document.getElementById('addAmount').value;
+if(!amt||amt<10){alert('Please enter minimum ₹10');return}
+alert(`UPI QR generated for ₹${amt}. In production this would display a scannable QR code.`);
+}
+
+async function doMoveToBank(){
+const d=await apiFetch('/wallet/move-to-bank',{method:'POST',body:JSON.stringify({amount:parseFloat(document.getElementById('mtbAmount').value),bank_name:document.getElementById('mtbBankName').value,account_number:document.getElementById('mtbAccount').value,ifsc_code:document.getElementById('mtbIfsc').value,account_holder_name:document.getElementById('mtbHolderName').value})});
+showResult('mtbResult',d?.success?'Withdrawal request submitted!':(d?.message||'Failed'),d?.success?'success':'error');
+if(d?.success)loadDashboard();
+}
+
+function handleLogout(){localStorage.clear();window.location.href='/login.html'}
+function viewUser(id){alert('User details view — ID: '+id)}
+
+window.addEventListener('DOMContentLoaded',()=>{loadDashboard()});
+</script>
 </body>
 </html>

@@ -1,83 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSRecharge - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:Arial,sans-serif; background:#f0f2f5; min-height:100vh; display:flex; align-items:center; justify-content:center; }
-        .login-box { background:#fff; padding:40px; border-radius:12px; box-shadow:0 2px 20px rgba(0,0,0,0.1); width:100%; max-width:400px; }
-        .login-box h1 { text-align:center; color:#0d1b2a; margin-bottom:8px; font-size:24px; }
-        .login-box p { text-align:center; color:#666; margin-bottom:24px; font-size:14px; }
-        .form-group { margin-bottom:16px; }
-        .form-group label { display:block; margin-bottom:6px; font-weight:600; color:#333; font-size:14px; }
-        .form-group input { width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:14px; }
-        .form-group input:focus { outline:none; border-color:#0a9396; }
-        .btn { width:100%; padding:12px; background:#0a9396; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer; }
-        .btn:hover { background:#005f73; }
-        .btn:disabled { opacity:0.6; cursor:not-allowed; }
-        .links { text-align:center; margin-top:16px; }
-        .links a { color:#0a9396; text-decoration:none; font-size:14px; }
-        .msg { padding:10px; border-radius:8px; margin-bottom:16px; display:none; font-size:14px; }
-        .msg.error { display:block; background:#fee; color:#c00; border:1px solid #fcc; }
-        .msg.success { display:block; background:#efe; color:#060; border:1px solid #cfc; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSRecharge — Multi-Recharge & B2B Banking Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+:root{--brand:#0d6efd;--glow:#0d6efd40;--bg:#070b14;--card:rgba(15,23,42,0.75);--border:rgba(255,255,255,0.08)}
+*{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#f1f5f9;overflow-x:hidden}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+.navbar-fintech{background:rgba(7,11,20,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:all .3s}
+.nav-logo{max-height:48px;max-width:190px}
+.hero{position:relative;padding:130px 0 100px;background:radial-gradient(circle at 50% 15%,var(--glow) 0%,rgba(7,11,20,0) 70%);overflow:hidden}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:50px;font-size:.84rem;color:#38bdf8;font-weight:600}
+.hero-title{font-size:clamp(2.4rem,5vw,4.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px}
+.gradient-text{background:linear-gradient(135deg,#fff 30%,#38bdf8 70%,var(--brand) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.btn-brand{background:linear-gradient(135deg,var(--brand) 0%,#1d4ed8 100%);color:#fff;font-weight:700;border-radius:12px;padding:13px 30px;border:none;box-shadow:0 4px 20px var(--glow);transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-brand:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow);color:#fff}
+.btn-outline{background:rgba(255,255,255,0.04);color:#f1f5f9;font-weight:600;border-radius:12px;padding:13px 28px;border:1px solid var(--border);transition:all .3s;text-decoration:none}
+.btn-outline:hover{background:rgba(255,255,255,0.1);color:#38bdf8;border-color:rgba(56,189,248,0.4)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;text-align:center;backdrop-filter:blur(10px)}
+.stat-num{font-size:2.3rem;font-weight:800;color:#38bdf8}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:32px 26px;transition:all .35s;height:100%}
+.service-card:hover{transform:translateY(-8px);border-color:rgba(56,189,248,0.4);box-shadow:0 20px 45px -15px rgba(0,0,0,0.7),0 0 20px var(--glow)}
+.service-icon{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,rgba(56,189,248,0.12),var(--glow));border:1px solid rgba(56,189,248,0.25);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#38bdf8;margin-bottom:22px}
+.flow-card{background:rgba(30,41,59,0.4);border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+.accordion-item{background:var(--card);border:1px solid var(--border);border-radius:14px!important;margin-bottom:12px;overflow:hidden}
+.accordion-button{background:transparent;color:#f1f5f9;font-weight:600;box-shadow:none!important;padding:18px 24px}
+.accordion-button:not(.collapsed){background:rgba(56,189,248,0.06);color:#38bdf8}
+.accordion-button::after{filter:invert(1)}
+.accordion-body{color:#94a3b8;font-size:.92rem;line-height:1.6;padding:0 24px 20px}
+.footer{background:#04060b;border-top:1px solid var(--border);padding:80px 0 35px}
+</style>
 </head>
 <body>
-    <div class="login-box">
-        <h1>&#9889; RSRecharge</h1>
-        <p>Sign in to your account</p>
-        <div class="msg" id="msg"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email / Mobile</label>
-                <input type="text" id="identifier" placeholder="Enter email or mobile" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Enter password" required>
-            </div>
-            <button type="submit" class="btn" id="submitBtn">Sign In</button>
-        </form>
-        <div class="links">
-            <a href="/login.html">Register New Account</a>
-        </div>
-    </div>
-    <script>
-        var msg = document.getElementById('msg');
-        function showMsg(text, type) { msg.textContent = text; msg.className = 'msg ' + type; }
+<nav class="navbar navbar-expand-lg navbar-fintech sticky-top">
+<div class="container py-1">
+<a class="navbar-brand d-flex align-items-center gap-2" href="/"><span style="font-size:1.4rem;font-weight:800;color:#38bdf8">&#9889;</span><span style="font-weight:800;font-size:1.2rem;color:#fff">RSRecharge</span></a>
+<button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><i class="bi bi-list fs-2"></i></button>
+<div class="collapse navbar-collapse" id="navMenu">
+<ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+<li class="nav-item"><a class="nav-link text-white-50" href="#services">Services</a></li>
+<li class="nav-item"><a class="nav-link text-white-50" href="#hierarchy">Partner Roles</a></li>
+<li class="nav-item"><a class="nav-link text-white-50" href="#technology">Tech Stack</a></li>
+<li class="nav-item"><a class="nav-link text-white-50" href="#faq">FAQ</a></li>
+</ul>
+<div class="d-flex align-items-center gap-2">
+<a href="/login.html" class="btn-brand"><i class="bi bi-shield-lock-fill"></i> Merchant Login</a>
+</div>
+</div>
+</div>
+</nav>
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            var btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.textContent = 'Signing in...';
-            try {
-                var res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        identifier: document.getElementById('identifier').value.trim(),
-                        password: document.getElementById('password').value
-                    })
-                });
-                var data = await res.json();
-                if (res.ok && data.success) {
-                    var d = data.data || data;
-                    localStorage.setItem('token', d.token);
-                    localStorage.setItem('user', JSON.stringify(d.user));
-                    showMsg('Login successful! Redirecting...', 'success');
-                    setTimeout(function() { window.location.href = '/dashboard.html'; }, 500);
-                } else {
-                    showMsg(data.message || 'Login failed', 'error');
-                    btn.disabled = false; btn.textContent = 'Sign In';
-                }
-            } catch(err) {
-                showMsg('Server error. Try again.', 'error');
-                btn.disabled = false; btn.textContent = 'Sign In';
-            }
-        });
-    </script>
+<section class="hero text-center">
+<div class="container" data-aos="fade-up">
+<div class="hero-badge mb-3"><i class="bi bi-lightning-charge-fill text-warning"></i> 99.98% Transaction Uptime &bull; Instant Settlement</div>
+<h1 class="hero-title mb-3">Powering Digital India's <br><span class="gradient-text">RSRecharge</span> B2B Network</h1>
+<p class="text-secondary mx-auto mb-4 fs-5" style="max-width:680px;line-height:1.6">India's leading high-margin Multi-Recharge, UPI Payment Gateway, and Automated Utility Bill payment platform engineered for Whitelabels, Distributors, and Retailers.</p>
+<div class="d-flex justify-content-center gap-3 flex-wrap">
+<a href="/login.html" class="btn-brand fs-6 py-3 px-4">Access Dashboard <i class="bi bi-arrow-right-short fs-5"></i></a>
+<a href="#services" class="btn-outline fs-6 py-3 px-4">Explore Services</a>
+</div>
+</div>
+</section>
+
+<section class="pb-5">
+<div class="container">
+<div class="row g-3" data-aos="fade-up" data-aos-delay="100">
+<div class="col-6 col-md-3"><div class="stat-card"><div class="stat-num">99.9%</div><div class="text-secondary small fw-semibold">Success Ratio</div></div></div>
+<div class="col-6 col-md-3"><div class="stat-card"><div class="stat-num">&lt; 1.5s</div><div class="text-secondary small fw-semibold">Processing Speed</div></div></div>
+<div class="col-6 col-md-3"><div class="stat-card"><div class="stat-num">24/7</div><div class="text-secondary small fw-semibold">Auto-UPI Add Money</div></div></div>
+<div class="col-6 col-md-3"><div class="stat-card"><div class="stat-num">100%</div><div class="text-secondary small fw-semibold">Direct Commission</div></div></div>
+</div>
+</div>
+</section>
+
+<section class="py-5" id="services">
+<div class="container">
+<div class="text-center mb-5" data-aos="fade-up">
+<span class="text-primary fw-bold text-uppercase small" style="letter-spacing:2px">Comprehensive Suite</span>
+<h2 class="fw-bold text-white mt-1">High Margin Digital Services</h2>
+<p class="text-secondary mx-auto" style="max-width:520px">Everything your retail point or distributor network needs to scale revenue seamlessly.</p>
+</div>
+<div class="row g-4">
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100"><div class="service-card"><div class="service-icon"><i class="bi bi-phone-fill"></i></div><h4 class="fw-bold text-white fs-5">Prepaid & Postpaid Mobile</h4><p class="text-secondary small m-0">All telecom circles covered across Jio, Airtel, VI, and BSNL with instant automatic plan and R-Offer fetch.</p></div></div>
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150"><div class="service-card"><div class="service-icon"><i class="bi bi-tv-fill"></i></div><h4 class="fw-bold text-white fs-5">DTH Instant Recharge</h4><p class="text-secondary small m-0">Tata Play, Airtel DTH, Dish TV, Sun Direct & Videocon D2H with real-time customer name refresh tools.</p></div></div>
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200"><div class="service-card"><div class="service-icon"><i class="bi bi-qr-code-scan"></i></div><h4 class="fw-bold text-white fs-5">Instant UPI Add Money</h4><p class="text-secondary small m-0">Self-serve automated wallet balance loading via Dynamic QR and Intent payment gateways with zero manual wait.</p></div></div>
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250"><div class="service-card"><div class="service-icon"><i class="bi bi-shuffle"></i></div><h4 class="fw-bold text-white fs-5">Intelligent API Routing</h4><p class="text-secondary small m-0">Zero downtime engine with automated fallback & provider priority switching on operator server latency.</p></div></div>
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300"><div class="service-card"><div class="service-icon"><i class="bi bi-diagram-3-fill"></i></div><h4 class="fw-bold text-white fs-5">Tiered Commission Engine</h4><p class="text-secondary small m-0">Auto-credit rate-card commission distribution up to 4 levels across Whitelabels, Masters, and Retailers.</p></div></div>
+<div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350"><div class="service-card"><div class="service-icon"><i class="bi bi-whatsapp"></i></div><h4 class="fw-bold text-white fs-5">WhatsApp & SMS Alerts</h4><p class="text-secondary small m-0">Automated transaction delivery receipts, wallet load alerts, and password reset tokens sent right to customers.</p></div></div>
+</div>
+</div>
+</section>
+
+<section class="py-5 bg-black bg-opacity-40" id="hierarchy">
+<div class="container">
+<div class="text-center mb-5" data-aos="fade-up">
+<span class="text-primary fw-bold text-uppercase small" style="letter-spacing:2px">Business Ecosystem</span>
+<h2 class="fw-bold text-white mt-1">Multi-Tier Reseller Infrastructure</h2>
+<p class="text-secondary mx-auto" style="max-width:550px">Scale your fintech brand or build your downline agent chain with flexible role permissions.</p>
+</div>
+<div class="row g-3" data-aos="fade-up" data-aos-delay="100">
+<div class="col-md-3 col-6"><div class="flow-card"><div class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 mb-2 px-2 py-1">Level 1</div><h5 class="fw-bold text-white">Admin</h5><p class="text-secondary small m-0">Own custom domain, own logo, custom branding, manage Super Distributors & downline rates.</p></div></div>
+<div class="col-md-3 col-6"><div class="flow-card"><div class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 mb-2 px-2 py-1">Level 2</div><h5 class="fw-bold text-white">Master Distributor</h5><p class="text-secondary small m-0">Create unlimited Distributors & Retailers with slab-level override commission margins.</p></div></div>
+<div class="col-md-3 col-6"><div class="flow-card"><div class="badge bg-secondary bg-opacity-10 text-light border border-secondary border-opacity-25 mb-2 px-2 py-1">Level 3</div><h5 class="fw-bold text-white">Distributor</h5><p class="text-secondary small m-0">Onboard local retailers, transfer funds instantly, and earn recurring commissions on all recharge volumes.</p></div></div>
+<div class="col-md-3 col-6"><div class="flow-card"><div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 mb-2 px-2 py-1">Level 4</div><h5 class="fw-bold text-white">Retailer</h5><p class="text-secondary small m-0">Direct customer service counter point with high-speed recharge UI, instant ledger, and live status.</p></div></div>
+</div>
+</div>
+</section>
+
+<section class="py-5" id="technology">
+<div class="container py-4">
+<div class="row align-items-center g-5">
+<div class="col-lg-6" data-aos="fade-right">
+<span class="text-primary fw-bold text-uppercase small" style="letter-spacing:2px">Bank-Grade Infrastructure</span>
+<h2 class="fw-bold text-white mt-1 mb-3">Engineered for Zero Downtime & Maximum Security</h2>
+<p class="text-secondary mb-4">Built on hardened Node.js architecture, strict JWT validation, SSL payload encryption, and concurrency-safe database row locking to protect every single Rupee.</p>
+<div class="d-flex flex-column gap-3">
+<div class="d-flex align-items-center gap-3"><i class="bi bi-shield-check text-primary fs-3"></i><div><strong class="text-white d-block">Pessimistic Wallet Locking</strong><span class="text-secondary small">Prevents double-spending anomalies during concurrent multi-terminal requests.</span></div></div>
+<div class="d-flex align-items-center gap-3"><i class="bi bi-cpu text-primary fs-3"></i><div><strong class="text-white d-block">Automated Reconciliation Engine</strong><span class="text-secondary small">Late pending refunds or callback confirmations automatically settled without manual intervention.</span></div></div>
+</div>
+</div>
+<div class="col-lg-6" data-aos="fade-left">
+<div class="service-card p-4">
+<div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary border-opacity-25 pb-3">
+<span class="fw-bold text-white"><i class="bi bi-terminal-fill text-primary me-2"></i>Live System Monitor</span>
+<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Operational 100%</span>
+</div>
+<div class="font-monospace small text-secondary">
+<p class="m-1 text-light">&gt; [API-GATEWAY] Connected to Primary Multi-Recharge Node</p>
+<p class="m-1 text-info">&gt; [UPI-CORE] Auto-Settlement Daemon Active (Port 443)</p>
+<p class="m-1 text-warning">&gt; [DATABASE] ACID Compliance & FOR UPDATE Locks Active</p>
+<p class="m-1 text-success">&gt; [STATUS] 0 Unresolved Transactions in Queue</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-5" id="faq">
+<div class="container py-3" style="max-width:800px">
+<div class="text-center mb-5" data-aos="fade-up">
+<span class="text-primary fw-bold text-uppercase small" style="letter-spacing:2px">Got Questions?</span>
+<h2 class="fw-bold text-white mt-1">Frequently Asked Questions</h2>
+</div>
+<div class="accordion" id="faqAccordion" data-aos="fade-up">
+<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#f1">How does Instant UPI Add Money work?</button></h2><div id="f1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">Our platform features automated Payment Gateway integration. Retailers enter the transfer amount, scan the Dynamic QR or pay via any UPI app (GPay, PhonePe, Paytm), and wallet balance is credited immediately within seconds.</div></div></div>
+<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">How are commissions distributed?</button></h2><div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Whenever a retailer completes a successful recharge, the system instantly calculates the rate card slab and credits margin to the Retailer, Distributor, Master Distributor, and Admin directly into their wallets in real-time.</div></div></div>
+<div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3">Can I launch my own brand with a custom domain?</button></h2><div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Yes! With a White Label account, you can point your own domain (e.g., portal.yourbrand.com), upload your custom logo, and your downline network will only see your company branding and customer support contacts.</div></div></div>
+</div>
+</div>
+</section>
+
+<footer class="footer">
+<div class="container">
+<div class="row g-4 justify-content-between mb-5">
+<div class="col-lg-4 col-md-6">
+<div class="d-flex align-items-center gap-2 mb-3"><span style="font-size:1.4rem;font-weight:800;color:#38bdf8">&#9889;</span><span style="font-weight:800;font-size:1.2rem;color:#fff">RSRecharge</span></div>
+<p class="text-secondary small mb-3">RSRecharge delivers bank-grade multi-recharge, automated bill settlements, and fintech solutions tailored for B2B retail distribution across India.</p>
+<div class="d-flex gap-3 text-secondary fs-5"><i class="bi bi-shield-fill-check text-primary"></i><i class="bi bi-lock-fill text-primary"></i><i class="bi bi-headset text-primary"></i></div>
+</div>
+<div class="col-lg-2 col-6">
+<h6 class="text-white fw-bold mb-3">Quick Navigation</h6>
+<ul class="list-unstyled small text-secondary d-flex flex-column gap-2">
+<li><a href="/login.html" class="text-secondary text-decoration-none">Merchant Login</a></li>
+<li><a href="#services" class="text-secondary text-decoration-none">Services List</a></li>
+<li><a href="#hierarchy" class="text-secondary text-decoration-none">Partner Network</a></li>
+<li><a href="#faq" class="text-secondary text-decoration-none">Help & FAQ</a></li>
+</ul>
+</div>
+<div class="col-lg-4 col-md-6">
+<h6 class="text-white fw-bold mb-3">Merchant Support Helpdesk</h6>
+<p class="text-secondary small mb-2"><i class="bi bi-telephone-fill text-primary me-2"></i> Contact Support</p>
+<p class="text-secondary small mb-3"><i class="bi bi-envelope-fill text-primary me-2"></i> support@rsrecharge.in</p>
+<a href="/login.html" class="btn btn-sm btn-brand">Open Merchant Terminal</a>
+</div>
+</div>
+<div class="border-top border-secondary border-opacity-25 pt-4 text-center text-secondary small">&copy; 2026 RSRecharge.in. All rights reserved. &bull; Secure Financial Technology Infrastructure.</div>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init({duration:700,once:true,offset:50})</script>
 </body>
 </html>
