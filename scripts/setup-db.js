@@ -1,6 +1,13 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+function getSSLConfig() {
+  if (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) {
+    return { minVersion: 'TLSv1.2', rejectUnauthorized: true };
+  }
+  return undefined;
+}
+
 async function setupDatabase() {
   let connection;
   try {
@@ -8,7 +15,8 @@ async function setupDatabase() {
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || '',
-      port: process.env.DB_PORT || 3306
+      port: parseInt(process.env.DB_PORT) || 3306,
+      ssl: getSSLConfig()
     });
 
     console.log('Connected to MySQL server');
