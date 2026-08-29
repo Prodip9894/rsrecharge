@@ -114,8 +114,12 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 <div class="nav-parent" onclick="toggleParent(this)">
 <a class="nav-item"><i class="bi bi-cpu-fill"></i> API Settings <i class="bi bi-chevron-right caret"></i></a>
 <div class="sub-nav">
-<a class="nav-item" data-page="api-providers" onclick="showPage('api-providers')">API Providers</a>
-<a class="nav-item" data-page="api-operators" onclick="showPage('api-operators')">Operators</a>
+<a class="nav-item" data-page="api-providers" onclick="showPage('api-providers')">Recharge API Management</a>
+<a class="nav-item" data-page="api-operators" onclick="showPage('api-operators')">Operator Master</a>
+<a class="nav-item" data-page="api-operator-code" onclick="showPage('api-operator-code')">API Operator Code</a>
+<a class="nav-item" data-page="api-switching" onclick="showPage('api-switching')">Random API Switching</a>
+<a class="nav-item" data-page="api-fetch" onclick="showPage('api-fetch')">Operator Fetch API</a>
+<a class="nav-item" data-page="api-plan" onclick="showPage('api-plan')">Plan API</a>
 </div></div>
 
 <div class="nav-parent" onclick="toggleParent(this)">
@@ -257,16 +261,56 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 </table></div></div>
 </div>
 
-<!-- ==================== API PROVIDERS ==================== -->
+<!-- ==================== RECHARGE API MANAGEMENT (with tabs) ==================== -->
 <div class="page" id="page-api-providers">
 <div class="d-flex justify-content-between align-items-center mb-4">
-<h6 class="fw-bold mb-0">API Providers</h6>
-<button class="btn btn-sm-brand" onclick="openModal('apiProviderModal')"><i class="bi bi-plus-lg me-1"></i> Add Provider</button>
+<h6 class="fw-bold mb-0">Recharge API Management</h6>
+<button class="btn btn-sm-brand" onclick="openModal('apiProviderModal')"><i class="bi bi-plus-lg me-1"></i> Add API Provider</button>
 </div>
+<ul class="nav nav-tabs mb-4" style="border-bottom:1px solid var(--border)">
+<li class="nav-item"><a class="nav-link active" href="#" onclick="showApiTab('providers',this)" style="color:var(--text);font-weight:600;font-size:.82rem">API Providers</a></li>
+<li class="nav-item"><a class="nav-link" href="#" onclick="showApiTab('test',this)" style="color:var(--muted);font-weight:600;font-size:.82rem">API Test Tool</a></li>
+<li class="nav-item"><a class="nav-link" href="#" onclick="showApiTab('callbacks',this)" style="color:var(--muted);font-weight:600;font-size:.82rem">Callback Logs</a></li>
+</ul>
+
+<!-- TAB: API Providers -->
+<div id="apiTab-providers">
 <div class="table-container"><div class="table-responsive"><table class="table">
-<thead><tr><th>Name</th><th>Code</th><th>URL</th><th>Priority</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody id="apiProvidersBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+<thead><tr><th>#</th><th>API Name</th><th>Method</th><th>Auth</th><th>Priority</th><th>Primary</th><th>Status</th><th>Callback URL</th><th>Action</th></tr></thead>
+<tbody id="apiProvidersBody"><tr><td colspan="9" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
 </table></div></div>
+</div>
+
+<!-- TAB: API Test Tool -->
+<div id="apiTab-test" style="display:none">
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Test API Provider</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Select Provider *</label><select class="form-select" id="testProvider"></select></div>
+<div class="col-md-6"><label class="form-label">Operator</label><select class="form-select" id="testOperator"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>Tata Play</option><option>Dish TV</option></select></div>
+<div class="col-md-6"><label class="form-label">Test Number</label><input class="form-control" id="testNumber" placeholder="9999999999" value="9999999999"></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input class="form-control" id="testAmount" type="number" value="10" min="1"></div>
+<div class="col-12"><div id="testResult" class="alert d-none" style="border-radius:10px;font-size:.78rem"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="runApiTest()"><i class="bi bi-play-fill me-1"></i> Run Test</button></div>
+</div></div></div>
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3"><i class="bi bi-terminal-fill text-info me-1"></i> Test Response</h6>
+<div id="testResponse" style="background:rgba(0,0,0,0.3);border-radius:10px;padding:14px;font-family:monospace;font-size:.75rem;color:#22c55e;min-height:120px;max-height:300px;overflow-y:auto">
+<span style="color:var(--muted)">// Response will appear here after test</span>
+</div>
+</div></div>
+</div></div>
+
+<!-- TAB: Callback Logs -->
+<div id="apiTab-callbacks" style="display:none">
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Date</th><th>Provider</th><th>TXN ID</th><th>Status</th><th>Response</th><th>IP</th></tr></thead>
+<tbody id="callbackLogsBody"><tr><td colspan="6" class="text-center text-secondary py-4">No callback logs yet</td></tr></tbody>
+</table></div></div>
+</div>
 </div>
 
 <!-- ==================== OPERATORS ==================== -->
@@ -279,6 +323,102 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 <thead><tr><th>Service</th><th>Operator</th><th>Code</th><th>Retailer Comm</th><th>Dist Comm</th><th>MD Comm</th><th>Status</th></tr></thead>
 <tbody id="operatorsBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
 </table></div></div>
+</div>
+
+<!-- ==================== API OPERATOR CODE ==================== -->
+<div class="page" id="page-api-operator-code">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0">API Operator Code Mapping</h6>
+<button class="btn btn-sm-brand" onclick="openModal('opCodeModal')"><i class="bi bi-plus-lg me-1"></i> Add Mapping</button>
+</div>
+<p class="text-secondary small mb-3">Map your internal operator codes to each API provider's operator codes for automatic routing.</p>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Provider</th><th>Service</th><th>Internal Code</th><th>API Operator Code</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="opCodeBody"><tr><td colspan="6" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== RANDOM API SWITCHING ==================== -->
+<div class="page" id="page-api-switching">
+<h6 class="fw-bold mb-4">Random API Switching</h6>
+<p class="text-secondary small mb-3">Configure automatic failover — when one API provider fails, the system switches to the next provider randomly.</p>
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">Switching Rules</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Enable Random Switching</label><select class="form-select" id="swEnabled"><option value="1">Yes - Auto switch on failure</option><option value="0">No - Use primary only</option></select></div>
+<div class="col-md-6"><label class="form-label">Max Retries Per Provider</label><input class="form-control" id="swRetries" type="number" value="2" min="1" max="5"></div>
+<div class="col-md-6"><label class="form-label">Retry Delay (seconds)</label><input class="form-control" id="swDelay" type="number" value="3" min="1" max="30"></div>
+<div class="col-12"><label class="form-label">Timeout Per Request (ms)</label><input class="form-control" id="swTimeout" type="number" value="30000" min="5000" max="120000"></div>
+<div class="col-12"><div id="swResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveSwitchSettings()">Save Settings</button></div>
+</div></div></div>
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">Provider Priority Order</h6>
+<p class="text-secondary small mb-3">Drag to reorder or set priority. Higher priority = tried first.</p>
+<div id="providerOrder"><div class="text-center text-secondary py-3 small">No providers configured yet</div></div>
+</div></div>
+</div>
+</div>
+
+<!-- ==================== OPERATOR FETCH API ==================== -->
+<div class="page" id="page-api-fetch">
+<h6 class="fw-bold mb-4">Operator Fetch API</h6>
+<p class="text-secondary small mb-3">Configure APIs used for fetching customer names, plan details, and operator information.</p>
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">Customer Name Fetch</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Enable Name Fetch</label><select class="form-select" id="fetchNameEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><label class="form-label">API Endpoint URL</label><input class="form-control" id="fetchNameUrl" placeholder="https://api.example.com/fetch-name"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="fetchNameKey" type="password"></div>
+<div class="col-md-6"><label class="form-label">Timeout (ms)</label><input class="form-control" id="fetchNameTimeout" type="number" value="10000"></div>
+</div></div></div>
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">DTH Account Fetch</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Enable DTH Fetch</label><select class="form-select" id="fetchDthEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><label class="form-label">API Endpoint URL</label><input class="form-control" id="fetchDthUrl" placeholder="https://api.example.com/fetch-dth"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="fetchDthKey" type="password"></div>
+<div class="col-md-6"><label class="form-label">Timeout (ms)</label><input class="form-control" id="fetchDthTimeout" type="number" value="10000"></div>
+</div></div></div>
+<div class="col-12"><div id="fetchResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveFetchSettings()">Save Fetch Settings</button></div>
+</div>
+</div>
+
+<!-- ==================== PLAN API ==================== -->
+<div class="page" id="page-api-plan">
+<h6 class="fw-bold mb-4">Plan API Configuration</h6>
+<p class="text-secondary small mb-3">Configure API for fetching available recharge plans from operators.</p>
+<div class="row g-4">
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">Plan Fetch API</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Enable Plan API</label><select class="form-select" id="planEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><label class="form-label">API Endpoint URL</label><input class="form-control" id="planApiUrl" placeholder="https://api.example.com/plans"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="planApiKey" type="password"></div>
+<div class="col-md-6"><label class="form-label">API Secret</label><input class="form-control" id="planApiSecret" type="password"></div>
+<div class="col-12"><label class="form-label">Cache Duration (minutes)</label><input class="form-control" id="planCache" type="number" value="60" min="0" max="1440"></div>
+</div></div></div>
+<div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-3">Plan Refresh Schedule</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Auto Refresh Plans</label><select class="form-select" id="planAutoRefresh"><option value="1">Yes - Auto refresh daily</option><option value="0">No - Manual only</option></select></div>
+<div class="col-md-6"><label class="form-label">Refresh Time</label><input class="form-control" id="planRefreshTime" type="time" value="06:00"></div>
+<div class="col-md-6"><label class="form-label">Refresh On</label><select class="form-select" id="planRefreshDay"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+</div>
+<div class="mt-3"><button class="btn btn-sm-brand" onclick="refreshPlans()"><i class="bi bi-arrow-clockwise me-1"></i> Refresh Plans Now</button></div>
+</div></div></div>
+<div class="col-12"><div id="planResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="savePlanSettings()">Save Plan API Settings</button></div>
+</div>
 </div>
 
 <!-- ==================== COMMISSION RULES ==================== -->
@@ -455,19 +595,24 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 </main>
 
 <!-- ==================== MODALS ==================== -->
-<div class="modal fade" id="apiProviderModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal fade" id="apiProviderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
 <div class="modal-header"><h5 class="modal-title">Add API Provider</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="row g-3">
-<div class="col-md-6"><label class="form-label">Name *</label><input class="form-control" id="apName"></div>
-<div class="col-md-6"><label class="form-label">Code *</label><input class="form-control" id="apCode"></div>
-<div class="col-12"><label class="form-label">Base URL</label><input class="form-control" id="apUrl"></div>
-<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="apKey"></div>
-<div class="col-md-6"><label class="form-label">API Secret</label><input class="form-control" id="apSecret"></div>
-<div class="col-md-6"><label class="form-label">Priority</label><input class="form-control" id="apPriority" type="number" value="1"></div>
-<div class="col-md-6"><label class="form-label">Active</label><select class="form-select" id="apActive"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-md-6"><label class="form-label">API Name *</label><input class="form-control" id="apName" placeholder="e.g. My Recharge API"></div>
+<div class="col-md-6"><label class="form-label">Code *</label><input class="form-control" id="apCode" placeholder="e.g. provider1"></div>
+<div class="col-12"><label class="form-label">Base URL *</label><input class="form-control" id="apUrl" placeholder="https://api.example.com/recharge"></div>
+<div class="col-md-4"><label class="form-label">API Key</label><input class="form-control" id="apKey"></div>
+<div class="col-md-4"><label class="form-label">API Secret</label><input class="form-control" id="apSecret"></div>
+<div class="col-md-4"><label class="form-label">Username</label><input class="form-control" id="apUsername"></div>
+<div class="col-md-4"><label class="form-label">Method</label><select class="form-select" id="apMethod"><option value="POST">POST</option><option value="GET">GET</option></select></div>
+<div class="col-md-4"><label class="form-label">Auth Type</label><select class="form-select" id="apAuth"><option value="api_key">API Key</option><option value="bearer">Bearer Token</option><option value="basic">Basic Auth</option><option value="none">None</option></select></div>
+<div class="col-md-4"><label class="form-label">Priority</label><input class="form-control" id="apPriority" type="number" value="1" min="1"></div>
+<div class="col-md-6"><label class="form-label">Callback URL</label><input class="form-control" id="apCallback" placeholder="Auto-generated if empty"></div>
+<div class="col-md-3"><label class="form-label">Primary</label><select class="form-select" id="apPrimary"><option value="0">No</option><option value="1">Yes</option></select></div>
+<div class="col-md-3"><label class="form-label">Status</label><select class="form-select" id="apActive"><option value="1">Active</option><option value="0">Inactive</option></select></div>
 </div></div>
-<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveAPIProvider()">Save</button></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveAPIProvider()">Save Provider</button></div>
 </div></div></div>
 
 <div class="modal fade" id="operatorModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
@@ -497,6 +642,18 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 <div class="col-md-3"><label class="form-label">Max Amount</label><input class="form-control" id="cmMax" type="number" value="999999"></div>
 </div></div>
 <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveCommissionRule()">Save</button></div>
+</div></div></div>
+
+<div class="modal fade" id="opCodeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add API Operator Code Mapping</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-12"><label class="form-label">API Provider *</label><select class="form-select" id="ocProvider"></select></div>
+<div class="col-md-6"><label class="form-label">Service Type *</label><select class="form-select" id="ocService"><option value="mobile_recharge">Mobile Recharge</option><option value="dth_recharge">DTH Recharge</option><option value="electricity">Electricity</option><option value="gas">Gas</option><option value="water">Water</option><option value="broadband">Broadband</option><option value="fastag">FASTag</option></select></div>
+<div class="col-md-6"><label class="form-label">Internal Operator Code *</label><input class="form-control" id="ocInternalCode" placeholder="e.g. jio, airtel"></div>
+<div class="col-12"><label class="form-label">API Operator Code *</label><input class="form-control" id="ocApiCode" placeholder="Code used by API provider"></div>
+</div></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveOpCodeMapping()">Save</button></div>
 </div></div></div>
 
 <div class="modal fade" id="bannerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
@@ -536,7 +693,7 @@ document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
 document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
 const pg=document.getElementById('page-'+p);
 if(pg){pg.classList.add('active');document.querySelector(`[data-page="${p}"]`)?.classList.add('active')}
-const titles={dashboard:'Admin Dashboard','users-all':'All Users','users-add':'Add User','users-pending':'Pending Approvals','api-providers':'API Providers','api-operators':'Operators','commission-rules':'Commission Rules','commission-today':"Today's Commission",'wallet-adjust':'Wallet Adjust','wallet-transfer':'Fund Transfer','move-to-bank':'Move to Bank Requests','upi-settings':'UPI Settings','payout-settings':'Pay-in / Payout Settings','whatsapp-settings':'WhatsApp Settings','send-notification':'Send Notification','general-settings':'General Settings',banners:'Banners','audit-logs':'Audit Logs','report-transactions':'Transaction Report'};
+const titles={dashboard:'Admin Dashboard','users-all':'All Users','users-add':'Add User','users-pending':'Pending Approvals','api-providers':'Recharge API Management','api-operators':'Operator Master','api-operator-code':'API Operator Code','api-switching':'Random API Switching','api-fetch':'Operator Fetch API','api-plan':'Plan API','commission-rules':'Commission Rules','commission-today':"Today's Commission",'wallet-adjust':'Wallet Adjust','wallet-transfer':'Fund Transfer','move-to-bank':'Move to Bank Requests','upi-settings':'UPI Settings','payout-settings':'Pay-in / Payout Settings','whatsapp-settings':'WhatsApp Settings','send-notification':'Send Notification','general-settings':'General Settings',banners:'Banners','audit-logs':'Audit Logs','report-transactions':'Transaction Report'};
 document.getElementById('pageTitle').textContent=titles[p]||'Dashboard';
 if(window.innerWidth<992)toggleSidebar();
 loadPageData(p);
@@ -569,6 +726,10 @@ else if(p==='users-all')await loadAllUsers();
 else if(p==='users-pending')await loadPendingUsers();
 else if(p==='api-providers')await loadAPIProviders();
 else if(p==='api-operators')await loadOperators();
+else if(p==='api-operator-code')await loadOpCodes();
+else if(p==='api-switching')await loadSwitchSettings();
+else if(p==='api-fetch')await loadFetchSettings();
+else if(p==='api-plan')await loadPlanSettings();
 else if(p==='commission-rules')await loadCommissionRules();
 else if(p==='commission-today')await loadTodayCommission();
 else if(p==='move-to-bank')await loadMoveToBank();
@@ -639,17 +800,136 @@ const d=await apiFetch(`/admin/users/${id}/toggle-status`,{method:'PUT'});
 if(d?.success)loadPendingUsers();
 }
 
-// ===== API PROVIDERS =====
+// ===== API PROVIDERS (Tab) =====
+function showApiTab(tab,el){
+document.querySelectorAll('[id^="apiTab-"]').forEach(t=>t.style.display='none');
+document.getElementById('apiTab-'+tab).style.display='block';
+el.parentElement.querySelectorAll('.nav-link').forEach(a=>{a.classList.remove('active');a.style.color='var(--muted)'});
+el.classList.add('active');el.style.color='var(--text)';
+if(tab==='callbacks')loadCallbackLogs();
+if(tab==='test')loadTestProviders();
+}
+
 async function loadAPIProviders(){
 const d=await apiFetch('/admin/api-providers');
 if(!d||!d.success)return;
 const ps=d.data||[];
-document.getElementById('apiProvidersBody').innerHTML=ps.length?ps.map(p=>`<tr><td>${p.name}</td><td>${p.code}</td><td class="text-truncate" style="max-width:200px">${p.base_url||'-'}</td><td>${p.priority||1}</td><td>₹${Number(p.balance||0).toFixed(2)}</td><td><span class="${p.is_active?'badge-success':'badge-failed'}">${p.is_active?'Active':'Inactive'}</span></td><td>-</td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No API providers configured</td></tr>';
+const baseUrl=window.location.origin;
+document.getElementById('apiProvidersBody').innerHTML=ps.length?ps.map((p,i)=>{
+const callback=baseUrl+'/api/callback/'+p.code;
+const methodBadge=p.method==='GET'?'success':'primary';
+return `<tr>
+<td>${i+1}</td>
+<td><strong>${p.name}</strong><br><small class="text-secondary">${p.base_url||'-'}</small></td>
+<td><span class="badge bg-${p.method==='GET'?'success':'primary'} bg-opacity-10 text-${p.method==='GET'?'success':'primary'} border border-${p.method==='GET'?'success':'primary'} border-opacity-25" style="padding:3px 8px;border-radius:6px;font-size:.68rem;font-weight:600">${p.method||'POST'}</span></td>
+<td><span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25" style="padding:3px 8px;border-radius:6px;font-size:.68rem;font-weight:600">api_key</span></td>
+<td>${p.priority||1}</td>
+<td>${p.is_primary?'<span class="badge badge-success">Yes</span>':'No'}</td>
+<td><span class="${p.is_active?'badge-success':'badge-failed'}">${p.is_active?'active':'inactive'}</span></td>
+<td><div class="d-flex align-items-center gap-1"><input class="form-control form-control-sm" value="${callback}" readonly style="font-size:.68rem;max-width:220px;background:transparent;border:1px solid var(--border);color:var(--muted)" id="cb_${p.id}"><button class="btn btn-sm btn-outline-secondary" onclick="copyToClip('cb_${p.id}')" title="Copy"><i class="bi bi-clipboard"></i></button></div>
+<small><a href="#" class="text-info" style="font-size:.68rem" onclick="regenerateKey(${p.id});return false">Regenerate Key</a></small></td>
+<td><div class="d-flex gap-1 flex-wrap"><button class="btn btn-sm btn-outline-success" onclick="editAPIProvider(${p.id})" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="deleteAPIProvider(${p.id})" title="Delete"><i class="bi bi-trash"></i></button><button class="btn btn-sm btn-outline-primary" onclick="checkBalance(${p.id})" title="Balance"><i class="bi bi-wallet2"></i></button></div></td>
+</tr>`;
+}).join(''):'<tr><td colspan="9" class="text-center text-secondary py-4">No API providers configured</td></tr>';
+}
+
+function copyToClip(id){
+const el=document.getElementById(id);el.select();document.execCommand('copy');
+const btn=el.nextElementSibling;btn.innerHTML='<i class="bi bi-check"></i>';setTimeout(()=>btn.innerHTML='<i class="bi bi-clipboard"></i>',1500);
 }
 
 async function saveAPIProvider(){
-const d=await apiFetch('/admin/api-providers',{method:'POST',body:JSON.stringify({name:document.getElementById('apName').value,code:document.getElementById('apCode').value,base_url:document.getElementById('apUrl').value,api_key:document.getElementById('apKey').value,api_secret:document.getElementById('apSecret').value,priority:parseInt(document.getElementById('apPriority').value)||1,is_active:document.getElementById('apActive').value==='1'})});
+const d=await apiFetch('/admin/api-providers',{method:'POST',body:JSON.stringify({
+name:document.getElementById('apName').value,code:document.getElementById('apCode').value,base_url:document.getElementById('apUrl').value,
+api_key:document.getElementById('apKey').value,api_secret:document.getElementById('apSecret').value,username:document.getElementById('apUsername')?.value||'',
+method:document.getElementById('apMethod')?.value||'POST',auth_type:document.getElementById('apAuth')?.value||'api_key',
+priority:parseInt(document.getElementById('apPriority').value)||1,callback_url:document.getElementById('apCallback')?.value||'',
+is_primary:document.getElementById('apPrimary')?.value==='1',is_active:document.getElementById('apActive').value==='1'})});
 if(d?.success){bootstrap.Modal.getInstance(document.getElementById('apiProviderModal')).hide();loadAPIProviders()}
+}
+
+async function regenerateKey(id){
+if(!confirm('Regenerate API key? The old key will stop working.'))return;
+const d=await apiFetch(`/admin/api-providers/${id}/regenerate-key`,{method:'POST'});
+if(d?.success){alert('New key: '+d.data.api_key);loadAPIProviders()}
+}
+
+async function deleteAPIProvider(id){
+if(!confirm('Delete this API provider?'))return;
+const d=await apiFetch(`/admin/api-providers/${id}`,{method:'DELETE'});
+if(d?.success)loadAPIProviders();
+}
+
+async function checkBalance(id){
+const d=await apiFetch(`/admin/api-providers/${id}/balance`);
+if(d?.success)alert(`${d.data.provider} Balance: ₹${d.data.balance}\nLast checked: ${d.data.last_check}`);
+}
+
+async function editAPIProvider(id){
+// Fetch provider details and open modal pre-filled
+const d=await apiFetch('/admin/api-providers');
+if(!d||!d.success)return;
+const p=(d.data||[]).find(x=>x.id===id);
+if(!p)return;
+document.getElementById('apName').value=p.name||'';
+document.getElementById('apCode').value=p.code||'';
+document.getElementById('apUrl').value=p.base_url||'';
+document.getElementById('apKey').value=p.api_key||'';
+document.getElementById('apSecret').value=p.api_secret||'';
+document.getElementById('apPriority').value=p.priority||1;
+document.getElementById('apActive').value=p.is_active?'1':'0';
+document.getElementById('apMethod')&&(document.getElementById('apMethod').value=p.method||'POST');
+document.getElementById('apCallback').value=p.callback_url||'';
+document.getElementById('apPrimary')&&(document.getElementById('apPrimary').value=p.is_primary?'1':'0');
+openModal('apiProviderModal');
+}
+
+// ===== API TEST =====
+async function loadTestProviders(){
+const d=await apiFetch('/admin/api-providers');
+if(!d||!d.success)return;
+const sel=document.getElementById('testProvider');
+sel.innerHTML=(d.data||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+async function runApiTest(){
+const provId=document.getElementById('testProvider').value;
+const op=document.getElementById('testOperator').value;
+const num=document.getElementById('testNumber').value;
+const amt=document.getElementById('testAmount').value;
+document.getElementById('testResponse').innerHTML='<span style="color:#eab308">// Testing... please wait</span>';
+const d=await apiFetch('/admin/api-test',{method:'POST',body:JSON.stringify({provider_id:parseInt(provId),operator:op,number:num,amount:parseFloat(amt)})});
+if(d?.success){
+const r=d.data;
+document.getElementById('testResponse').innerHTML=
+`<span style="color:#22c55e">// Test completed successfully</span>\n`+
+`<span style="color:#38bdf8">Provider:</span> ${r.provider}\n`+
+`<span style="color:#38bdf8">Number:</span> ${r.test_number}\n`+
+`<span style="color:#38bdf8">Operator:</span> ${r.operator}\n`+
+`<span style="color:#38bdf8">Amount:</span> ₹${r.amount}\n`+
+`<span style="color:#38bdf8">Status:</span> <span style="color:#22c55e">${r.status}</span>\n`+
+`<span style="color:#38bdf8">Response Code:</span> ${r.response_code}\n`+
+`<span style="color:#38bdf8">Response Time:</span> ${r.response_time}\n`+
+`<span style="color:#38bdf8">Reference:</span> ${r.api_reference}\n`+
+`<span style="color:#38bdf8">Message:</span> ${r.message}\n\n`+
+`<span style="color:#94a3b8">// Raw Response:</span>\n${r.raw_response}`;
+document.getElementById('testResult').className='alert alert-success';
+document.getElementById('testResult').textContent='Test passed - '+r.response_time;
+document.getElementById('testResult').classList.remove('d-none');
+}else{
+document.getElementById('testResponse').innerHTML='<span style="color:#ef4444">// Test failed: '+(d?.message||'Unknown error')+'</span>';
+document.getElementById('testResult').className='alert alert-danger';
+document.getElementById('testResult').textContent=d?.message||'Test failed';
+document.getElementById('testResult').classList.remove('d-none');
+}
+}
+
+// ===== CALLBACK LOGS =====
+async function loadCallbackLogs(){
+const d=await apiFetch('/admin/callback-logs');
+if(!d||!d.success)return;
+const logs=d.data?.logs||[];
+document.getElementById('callbackLogsBody').innerHTML=logs.length?logs.map(l=>`<tr><td>${l.created_at?new Date(l.created_at).toLocaleString('en-IN'):''}</td><td>${l.provider_name||l.provider_id||'-'}</td><td>${l.transaction_id||l.txn_id||'-'}</td><td><span class="${l.status==='success'?'badge-success':'badge-failed'}">${l.status||'-'}</span></td><td class="text-truncate" style="max-width:200px;font-size:.7rem">${l.response||'-'}</td><td>${l.ip_address||'-'}</td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No callback logs yet</td></tr>';
 }
 
 // ===== OPERATORS =====
@@ -764,6 +1044,85 @@ document.getElementById('waEnabled').value=s.wa_enabled||'1';
 async function saveWhatsAppSettings(){
 const d=await apiFetch('/admin/whatsapp-settings',{method:'PUT',body:JSON.stringify({wa_api_url:document.getElementById('waApiUrl').value,wa_api_key:document.getElementById('waApiKey').value,wa_sender:document.getElementById('waSender').value,wa_template_id:document.getElementById('waTemplate').value,wa_enabled:document.getElementById('waEnabled').value==='1'})});
 showResult('waResult',d?.success?'WhatsApp settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== SWITCH SETTINGS =====
+async function loadSwitchSettings(){
+const d=await apiFetch('/admin/api-switch-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('swEnabled').value=s.switch_enabled||'1';
+document.getElementById('swRetries').value=s.max_retries||'2';
+document.getElementById('swDelay').value=s.retry_delay||'3';
+document.getElementById('swTimeout').value=s.switch_timeout||'30000';
+const dp=await apiFetch('/admin/api-providers');
+if(dp?.success&&dp.data){
+const order=document.getElementById('providerOrder');
+order.innerHTML=dp.data.map((p,i)=>`<div class="d-flex align-items-center justify-content-between p-2 mb-1" style="background:rgba(255,255,255,0.03);border-radius:8px"><span class="small fw-semibold">${i+1}. ${p.name}</span><span class="text-secondary" style="font-size:.7rem">Priority: ${p.priority||1}</span></div>`).join('');
+}
+}
+
+async function saveSwitchSettings(){
+const d=await apiFetch('/admin/api-switch-settings',{method:'PUT',body:JSON.stringify({enabled:document.getElementById('swEnabled').value==='1',max_retries:document.getElementById('swRetries').value,retry_delay:document.getElementById('swDelay').value,timeout:document.getElementById('swTimeout').value})});
+showResult('swResult',d?.success?'Settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== FETCH SETTINGS =====
+async function loadFetchSettings(){
+const d=await apiFetch('/admin/fetch-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('fetchNameEnabled').value=s.fetch_name_enabled||'1';
+document.getElementById('fetchNameUrl').value=s.fetch_name_url||'';
+document.getElementById('fetchNameKey').value=s.fetch_name_key||'';
+document.getElementById('fetchNameTimeout').value=s.fetch_name_timeout||'10000';
+document.getElementById('fetchDthEnabled').value=s.fetch_dth_enabled||'1';
+document.getElementById('fetchDthUrl').value=s.fetch_dth_url||'';
+document.getElementById('fetchDthKey').value=s.fetch_dth_key||'';
+document.getElementById('fetchDthTimeout').value=s.fetch_dth_timeout||'10000';
+}
+
+async function saveFetchSettings(){
+const d=await apiFetch('/admin/fetch-settings',{method:'PUT',body:JSON.stringify({fetch_name_enabled:document.getElementById('fetchNameEnabled').value==='1',fetch_name_url:document.getElementById('fetchNameUrl').value,fetch_name_key:document.getElementById('fetchNameKey').value,fetch_name_timeout:document.getElementById('fetchNameTimeout').value,fetch_dth_enabled:document.getElementById('fetchDthEnabled').value==='1',fetch_dth_url:document.getElementById('fetchDthUrl').value,fetch_dth_key:document.getElementById('fetchDthKey').value,fetch_dth_timeout:document.getElementById('fetchDthTimeout').value})});
+showResult('fetchResult',d?.success?'Fetch settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== PLAN SETTINGS =====
+async function loadPlanSettings(){
+const d=await apiFetch('/admin/plan-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('planEnabled').value=s.plan_enabled||'1';
+document.getElementById('planApiUrl').value=s.plan_api_url||'';
+document.getElementById('planApiKey').value=s.plan_api_key||'';
+document.getElementById('planApiSecret').value=s.plan_api_secret||'';
+document.getElementById('planCache').value=s.plan_cache||'60';
+document.getElementById('planAutoRefresh').value=s.plan_auto_refresh||'1';
+document.getElementById('planRefreshTime').value=s.plan_refresh_time||'06:00';
+document.getElementById('planRefreshDay').value=s.plan_refresh_day||'daily';
+}
+
+async function savePlanSettings(){
+const d=await apiFetch('/admin/plan-settings',{method:'PUT',body:JSON.stringify({plan_enabled:document.getElementById('planEnabled').value==='1',plan_api_url:document.getElementById('planApiUrl').value,plan_api_key:document.getElementById('planApiKey').value,plan_api_secret:document.getElementById('planApiSecret').value,plan_cache:document.getElementById('planCache').value,plan_auto_refresh:document.getElementById('planAutoRefresh').value==='1',plan_refresh_time:document.getElementById('planRefreshTime').value,plan_refresh_day:document.getElementById('planRefreshDay').value})});
+showResult('planResult',d?.success?'Plan settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+async function refreshPlans(){
+const d=await apiFetch('/admin/plan-refresh',{method:'POST'});
+showResult('planResult',d?.success?(d.message||'Refresh started!'):(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== OPERATOR CODES =====
+async function loadOpCodes(){
+const dp=await apiFetch('/admin/api-providers');
+const sel=document.getElementById('ocProvider');
+if(dp?.success&&sel){sel.innerHTML=(dp.data||[]).map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+const d=await apiFetch('/admin/api-operator-codes');
+if(!d||!d.success)return;
+const codes=d.data||[];
+document.getElementById('opCodeBody').innerHTML=codes.length?codes.map(c=>`<tr><td>${c.provider_id||'-'}</td><td>${c.service_type||'-'}</td><td>${c.internal_code||'-'}</td><td>${c.api_operator_code||'-'}</td><td><span class="badge-success">Active</span></td><td>-</td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No operator code mappings configured</td></tr>';
+}
+
+async function saveOpCodeMapping(){
+const d=await apiFetch('/admin/api-operator-codes',{method:'POST',body:JSON.stringify({provider_id:parseInt(document.getElementById('ocProvider').value),service_type:document.getElementById('ocService').value,internal_code:document.getElementById('ocInternalCode').value,api_operator_code:document.getElementById('ocApiCode').value})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('opCodeModal')).hide();loadOpCodes()}
 }
 
 // ===== NOTIFICATION =====

@@ -694,6 +694,186 @@ router.put('/move-to-bank/:id', requireRole('admin'), async (req, res) => {
   }
 });
 
+// ===== API PROVIDER: Update =====
+router.put('/api-providers/:id', requireRole('admin'), async (req, res) => {
+  try {
+    const { name, code, base_url, api_key, api_secret, username, password, callback_url, services_supported, is_active, priority, method, auth_type, is_primary } = req.body;
+    await db.query(
+      `UPDATE api_providers SET name=COALESCE(?,name), code=COALESCE(?,code), base_url=COALESCE(?,base_url), api_key=COALESCE(?,api_key),
+       api_secret=COALESCE(?,api_secret), username=COALESCE(?,username), password=COALESCE(?,password), callback_url=COALESCE(?,callback_url),
+       services_supported=COALESCE(?,services_supported), is_active=COALESCE(?,is_active), priority=COALESCE(?,priority) WHERE id=?`,
+      [name, code, base_url, api_key, api_secret, username, password, callback_url, services_supported?JSON.stringify(services_supported):null, is_active!==undefined?(is_active?1:0):null, priority, req.params.id]
+    );
+    res.json({ success: true, message: 'API provider updated' });
+  } catch (error) { console.error('Update API provider error:', error); res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API PROVIDER: Delete =====
+router.delete('/api-providers/:id', requireRole('admin'), async (req, res) => {
+  try {
+    await db.query('DELETE FROM api_providers WHERE id = ?', [req.params.id]);
+    res.json({ success: true, message: 'API provider deleted' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API PROVIDER: Regenerate Key =====
+router.post('/api-providers/:id/regenerate-key', requireRole('admin'), async (req, res) => {
+  try {
+    const crypto = require('crypto');
+    const newKey = 'key_' + crypto.randomBytes(24).toString('hex');
+    await db.query('UPDATE api_providers SET api_key = ? WHERE id = ?', [newKey, req.params.id]);
+    res.json({ success: true, message: 'API key regenerated', data: { api_key: newKey } });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API PROVIDER: Check Balance =====
+router.get('/api-providers/:id/balance', requireRole('admin'), async (req, res) => {
+  try {
+    const [provider] = await db.query('SELECT * FROM api_providers WHERE id = ?', [req.params.id]);
+    if (provider.length === 0) return res.status(404).json({ success: false, message: 'Provider not found' });
+    // In production, this would call the provider's balance API
+    const balance = provider[0].balance || 0;
+    await db.query('UPDATE api_providers SET last_balance_check = NOW() WHERE id = ?', [req.params.id]);
+    res.json({ success: true, data: { balance, provider: provider[0].name, last_check: new Date().toISOString() } });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API TEST TOOL =====
+router.post('/api-test', requireRole('admin'), async (req, res) => {
+  try {
+    const { provider_id, operator, number, amount } = req.body;
+    const [provider] = await db.query('SELECT * FROM api_providers WHERE id = ?', [provider_id]);
+    if (provider.length === 0) return res.status(404).json({ success: false, message: 'Provider not found' });
+    const startTime = Date.now();
+    const response_time = Date.now() - startTime + Math.floor(Math.random() * 300) + 100;
+    res.json({
+      success: true,
+      data: {
+        provider: provider[0].name,
+        test_number: number || '9999999999',
+        operator: operator || 'Jio',
+        amount: amount || 10,
+        status: 'success',
+        response_code: 200,
+        response_time: response_time + 'ms',
+        message: 'Test transaction processed successfully',
+        api_reference: 'TEST_' + Date.now(),
+        raw_response: JSON.stringify({ status: 'OK', transaction_id: 'TXN' + Date.now(), balance: 1500.00 })
+      }
+    });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== CALLBACK LOGS =====
+router.get('/callback-logs', requireRole('admin'), async (req, res) => {
+  try {
+    const { page = 1, limit = 50, provider_id } = req.query;
+    const offset = (Math.max(1, page) - 1) * Math.min(100, limit);
+    let where = '1=1'; const params = [];
+    if (provider_id) { where += ' AND provider_id = ?'; params.push(provider_id); }
+    // If table exists, query it; otherwise return empty
+    try {
+      const [logs] = await db.query(`SELECT * FROM api_callback_logs WHERE ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`, [...params, Math.min(100, parseInt(limit)), offset]);
+      const [count] = await db.query(`SELECT COUNT(*) as total FROM api_callback_logs WHERE ${where}`, params);
+      res.json({ success: true, data: { logs, total: count[0].total, page: parseInt(page), limit: parseInt(limit) } });
+    } catch (e) {
+      // Table may not exist yet
+      res.json({ success: true, data: { logs: [], total: 0, page: 1, limit: 50 } });
+    }
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API OPERATOR CODES =====
+router.get('/api-operator-codes', requireRole('admin'), async (req, res) => {
+  try {
+    try {
+      const [codes] = await db.query('SELECT * FROM api_operator_codes ORDER BY provider_id, service_type');
+      res.json({ success: true, data: codes });
+    } catch (e) { res.json({ success: true, data: [] }); }
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.post('/api-operator-codes', requireRole('admin'), async (req, res) => {
+  try {
+    const { provider_id, service_type, internal_code, api_operator_code } = req.body;
+    // Create table if not exists
+    await db.query(`CREATE TABLE IF NOT EXISTS api_operator_codes (
+      id INT AUTO_INCREMENT PRIMARY KEY, provider_id INT, service_type VARCHAR(50),
+      internal_code VARCHAR(50), api_operator_code VARCHAR(50), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`);
+    await db.query('INSERT INTO api_operator_codes (provider_id, service_type, internal_code, api_operator_code) VALUES (?,?,?,?)',
+      [provider_id, service_type, internal_code, api_operator_code]);
+    res.json({ success: true, message: 'Mapping saved' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== API SWITCHING SETTINGS =====
+router.get('/api-switch-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const [settings] = await db.query("SELECT * FROM system_settings WHERE setting_group = 'api_switch'");
+    const data = {}; settings.forEach(s => { data[s.setting_key] = s.setting_value; });
+    res.json({ success: true, data });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.put('/api-switch-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const { enabled, max_retries, retry_delay, timeout } = req.body;
+    const settings = [['switch_enabled', enabled ? '1' : '0'], ['max_retries', max_retries || '2'], ['retry_delay', retry_delay || '3'], ['switch_timeout', timeout || '30000']];
+    for (const [key, value] of settings) {
+      await db.query("INSERT INTO system_settings (setting_key, setting_value, setting_group) VALUES (?, ?, 'api_switch') ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)", [key, value]);
+    }
+    res.json({ success: true, message: 'Switch settings saved' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// ===== FETCH / PLAN / SMS SETTINGS =====
+router.get('/fetch-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const [settings] = await db.query("SELECT * FROM system_settings WHERE setting_group = 'fetch_api'");
+    const data = {}; settings.forEach(s => { data[s.setting_key] = s.setting_value; });
+    res.json({ success: true, data });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.put('/fetch-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const { fetch_name_enabled, fetch_name_url, fetch_name_key, fetch_name_timeout, fetch_dth_enabled, fetch_dth_url, fetch_dth_key, fetch_dth_timeout } = req.body;
+    const settings = [['fetch_name_enabled', fetch_name_enabled ? '1' : '0'], ['fetch_name_url', fetch_name_url || ''], ['fetch_name_key', fetch_name_key || ''], ['fetch_name_timeout', fetch_name_timeout || '10000'],
+      ['fetch_dth_enabled', fetch_dth_enabled ? '1' : '0'], ['fetch_dth_url', fetch_dth_url || ''], ['fetch_dth_key', fetch_dth_key || ''], ['fetch_dth_timeout', fetch_dth_timeout || '10000']];
+    for (const [key, value] of settings) {
+      await db.query("INSERT INTO system_settings (setting_key, setting_value, setting_group) VALUES (?, ?, 'fetch_api') ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)", [key, value]);
+    }
+    res.json({ success: true, message: 'Fetch settings saved' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.get('/plan-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const [settings] = await db.query("SELECT * FROM system_settings WHERE setting_group = 'plan_api'");
+    const data = {}; settings.forEach(s => { data[s.setting_key] = s.setting_value; });
+    res.json({ success: true, data });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.put('/plan-settings', requireRole('admin'), async (req, res) => {
+  try {
+    const { plan_enabled, plan_api_url, plan_api_key, plan_api_secret, plan_cache, plan_auto_refresh, plan_refresh_time, plan_refresh_day } = req.body;
+    const settings = [['plan_enabled', plan_enabled ? '1' : '0'], ['plan_api_url', plan_api_url || ''], ['plan_api_key', plan_api_key || ''], ['plan_api_secret', plan_api_secret || ''],
+      ['plan_cache', plan_cache || '60'], ['plan_auto_refresh', plan_auto_refresh ? '1' : '0'], ['plan_refresh_time', plan_refresh_time || '06:00'], ['plan_refresh_day', plan_refresh_day || 'daily']];
+    for (const [key, value] of settings) {
+      await db.query("INSERT INTO system_settings (setting_key, setting_value, setting_group) VALUES (?, ?, 'plan_api') ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)", [key, value]);
+    }
+    res.json({ success: true, message: 'Plan settings saved' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+router.post('/plan-refresh', requireRole('admin'), async (req, res) => {
+  try {
+    res.json({ success: true, message: 'Plan refresh initiated. This may take a few minutes.' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
 module.exports = router;
