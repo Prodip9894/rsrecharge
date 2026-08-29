@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.log
+start-mysql.bat
+scripts/test-api.js
+scripts/full-test.js
+scripts/live-test.js
