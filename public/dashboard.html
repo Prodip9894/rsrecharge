@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — RSRecharge</title>
+<title>Admin Dashboard — RSRecharge</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,77 +17,70 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 .sidebar-header{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .sidebar-header .brand{font-weight:800;font-size:1.2rem;color:#38bdf8}
 .sidebar-header .brand-sub{font-size:.65rem;color:var(--muted);display:block;margin-top:2px}
-.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
-.nav-section{padding:8px 20px;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:all 0.2s;cursor:pointer;border-left:3px solid transparent}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:10px 20px 4px;font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-top:4px}
+.nav-parent{cursor:pointer}
+.nav-parent .nav-item{justify-content:space-between}
+.nav-parent .caret{transition:transform 0.2s;font-size:.7rem;color:var(--muted)}
+.nav-parent.open .caret{transform:rotate(90deg)}
+.nav-parent .sub-nav{display:none;background:rgba(255,255,255,0.02)}
+.nav-parent.open .sub-nav{display:block}
+.sub-nav .nav-item{padding:8px 20px 8px 44px;font-size:.78rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:.82rem;font-weight:500;transition:all 0.2s;cursor:pointer;border-left:3px solid transparent}
 .nav-item:hover,.nav-item.active{background:rgba(56,189,248,0.08);color:#38bdf8;border-left-color:#38bdf8}
-.nav-item i{font-size:1.1rem;width:22px;text-align:center}
-.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sidebar-footer .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0d6efd,#38bdf8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff}
+.nav-item i{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-footer .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0d6efd,#38bdf8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#fff}
 .sidebar-footer .user-info{flex:1}
-.sidebar-footer .user-name{font-size:.8rem;font-weight:600;color:var(--text)}
-.sidebar-footer .user-role{font-size:.65rem;color:var(--muted)}
+.sidebar-footer .user-name{font-size:.78rem;font-weight:600;color:var(--text)}
+.sidebar-footer .user-role{font-size:.62rem;color:var(--muted)}
 
 .main{margin-left:260px;min-height:100vh}
-.topbar{background:rgba(7,11,20,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999}
-.topbar-left{display:flex;align-items:center;gap:16px}
-.topbar-right{display:flex;align-items:center;gap:14px}
-.page-title{font-size:1.1rem;font-weight:700}
-.content{padding:24px 28px}
+.topbar{background:rgba(7,11,20,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999}
+.page-title{font-size:1.05rem;font-weight:700}
+.content{padding:20px 28px}
 
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(8px);transition:all 0.3s}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;backdrop-filter:blur(8px);transition:all 0.3s;position:relative;overflow:hidden}
 .stat-card:hover{border-color:rgba(56,189,248,0.3);transform:translateY(-2px)}
-.stat-card .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px}
-.stat-card .value{font-size:1.6rem;font-weight:800;color:#38bdf8}
-.stat-card .sub{font-size:.7rem;color:var(--muted);margin-top:4px}
-.stat-card.green .value{color:#22c55e}
-.stat-card.yellow .value{color:#eab308}
-.stat-card.red .value{color:#ef4444}
-.stat-card.purple .value{color:#a855f7}
+.stat-card .label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:6px}
+.stat-card .value{font-size:1.5rem;font-weight:800;color:#38bdf8}
+.stat-card .sub{font-size:.68rem;color:var(--muted);margin-top:4px}
+.stat-card .icon-bg{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:2.5rem;opacity:.08;color:#38bdf8}
+.stat-card.green .value{color:#22c55e}.stat-card.green .icon-bg{color:#22c55e}
+.stat-card.orange .value{color:#f97316}.stat-card.orange .icon-bg{color:#f97316}
+.stat-card.red .value{color:#ef4444}.stat-card.red .icon-bg{color:#ef4444}
+.stat-card.purple .value{color:#a855f7}.stat-card.purple .icon-bg{color:#a855f7}
+.stat-card.yellow .value{color:#eab308}.stat-card.yellow .icon-bg{color:#eab308}
+.stat-card.cyan .value{color:#06b6d4}.stat-card.cyan .icon-bg{color:#06b6d4}
 
-.service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;transition:all 0.3s;cursor:pointer;text-decoration:none;color:inherit}
-.service-card:hover{border-color:rgba(56,189,248,0.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
-.service-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px}
-.service-icon.blue{background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.25)}
-.service-icon.green{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
-.service-icon.purple{background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.25)}
-.service-icon.yellow{background:rgba(234,179,8,0.12);color:#eab308;border:1px solid rgba(234,179,8,0.25)}
-.service-icon.red{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
-.service-icon.cyan{background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.25)}
-.service-card h5{font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:4px}
-.service-card p{font-size:.72rem;color:var(--muted);margin:0;line-height:1.5}
-
-.modal-content{background:var(--sidebar);border:1px solid var(--border);border-radius:20px}
-.modal-header{border-bottom:1px solid var(--border);padding:18px 24px}
-.modal-title{font-weight:700;font-size:1rem}
-.btn-close{filter:invert(1)}
-.modal-body{padding:24px}
-.modal-footer{border-top:1px solid var(--border);padding:14px 24px}
-.form-label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.form-control,.form-select{background:rgba(15,23,42,0.6);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:11px 14px;font-size:.85rem;transition:all 0.2s}
-.form-control:focus,.form-select:focus{background:rgba(15,23,42,0.85);border-color:rgba(56,189,248,0.6);box-shadow:0 0 0 3px rgba(56,189,248,0.15);color:var(--text)}
-.form-select option{background:var(--sidebar);color:var(--text)}
-.btn-brand{background:linear-gradient(135deg,var(--brand),#1d4ed8);color:#fff;font-weight:700;border-radius:12px;padding:11px 24px;border:none;box-shadow:0 4px 16px var(--glow);transition:all 0.3s}
-.btn-brand:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--glow);filter:brightness(1.1)}
-.btn-outline-brand{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:12px;padding:11px 24px;font-weight:600;transition:all 0.2s}
-.btn-outline-brand:hover{border-color:rgba(56,189,248,0.4);color:#38bdf8}
-
-.table-container{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.table-container{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
 .table-container .table{margin:0;color:var(--text)}
-.table-container .table th{background:rgba(15,23,42,0.6);font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);padding:12px 16px}
-.table-container .table td{font-size:.8rem;border-bottom:1px solid var(--border);padding:12px 16px;vertical-align:middle}
+.table-container .table th{background:rgba(15,23,42,0.6);font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);padding:10px 14px}
+.table-container .table td{font-size:.78rem;border-bottom:1px solid var(--border);padding:10px 14px;vertical-align:middle}
 .table-container .table tr:hover td{background:rgba(56,189,248,0.03)}
 
-.badge-success{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
-.badge-pending{background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
-.badge-failed{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:600}
+.badge-success{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.25);padding:3px 10px;border-radius:8px;font-size:.68rem;font-weight:600}
+.badge-pending{background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.25);padding:3px 10px;border-radius:8px;font-size:.68rem;font-weight:600}
+.badge-failed{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25);padding:3px 10px;border-radius:8px;font-size:.68rem;font-weight:600}
+
+.modal-content{background:var(--sidebar);border:1px solid var(--border);border-radius:18px}
+.modal-header{border-bottom:1px solid var(--border);padding:16px 22px}
+.modal-title{font-weight:700;font-size:.95rem}
+.btn-close{filter:invert(1)}
+.modal-body{padding:22px}
+.modal-footer{border-top:1px solid var(--border);padding:12px 22px}
+.form-label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.form-control,.form-select{background:rgba(15,23,42,0.6);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font-size:.82rem;transition:all 0.2s}
+.form-control:focus,.form-select:focus{background:rgba(15,23,42,0.85);border-color:rgba(56,189,248,0.6);box-shadow:0 0 0 2px rgba(56,189,248,0.15);color:var(--text)}
+.form-select option{background:var(--sidebar);color:var(--text)}
+.btn-brand{background:linear-gradient(135deg,var(--brand),#1d4ed8);color:#fff;font-weight:700;border-radius:10px;padding:10px 22px;border:none;box-shadow:0 4px 14px var(--glow);transition:all 0.3s;font-size:.82rem}
+.btn-brand:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--glow);filter:brightness(1.1)}
+.btn-sm-brand{background:linear-gradient(135deg,var(--brand),#1d4ed8);color:#fff;font-weight:600;border-radius:8px;padding:6px 14px;border:none;font-size:.72rem;transition:all 0.2s}
+.btn-sm-brand:hover{filter:brightness(1.1)}
 
 .page{display:none}
 .page.active{display:block}
-
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
-.empty-state i{font-size:3rem;margin-bottom:16px;opacity:.4}
 
 .sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:999}
 @media(max-width:992px){
@@ -96,365 +89,428 @@ body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden}
 .sidebar-overlay.open{display:block}
 .main{margin-left:0}
 }
-
-.notification-badge{position:relative}
-.notification-badge::after{content:attr(data-count);position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:.55rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;display:none}
 </style>
 </head>
 <body>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-header">
-<div>
-<span class="brand">&#9889; RSRecharge</span>
-<span class="brand-sub">Multi-Recharge Platform</span>
+<div><span class="brand">&#9889; RSRecharge</span><span class="brand-sub">Admin Control Panel</span></div>
 </div>
-</div>
-<nav class="sidebar-nav">
+<nav class="sidebar-nav" id="sidebarNav">
 <div class="nav-section">Main</div>
 <a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')"><i class="bi bi-grid-fill"></i> Dashboard</a>
+
+<div class="nav-section">Management</div>
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-people-fill"></i> Users <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="users-all" onclick="showPage('users-all')">All Users</a>
+<a class="nav-item" data-page="users-add" onclick="showPage('users-add')">Add User</a>
+<a class="nav-item" data-page="users-pending" onclick="showPage('users-pending')">Pending Approvals</a>
+</div></div>
+
 <div class="nav-section">Services</div>
-<a class="nav-item" data-page="recharge" onclick="showPage('recharge')"><i class="bi bi-phone-fill"></i> Mobile Recharge</a>
-<a class="nav-item" data-page="dth" onclick="showPage('dth')"><i class="bi bi-tv-fill"></i> DTH Recharge</a>
-<a class="nav-item" data-page="billpay" onclick="showPage('billpay')"><i class="bi bi-receipt-cutoff"></i> Bill Payment</a>
-<a class="nav-item" data-page="aeps" onclick="showPage('aeps')"><i class="bi bi-fingerprint"></i> AEPS Cash</a>
-<a class="nav-item" data-page="dmt" onclick="showPage('dmt')"><i class="bi bi-bank"></i> Money Transfer</a>
-<div class="nav-section">Wallet</div>
-<a class="nav-item" data-page="wallet" onclick="showPage('wallet')"><i class="bi bi-wallet2"></i> My Wallet</a>
-<a class="nav-item" data-page="addmoney" onclick="showPage('addmoney')"><i class="bi bi-qr-code-scan"></i> Add Money (UPI)</a>
-<a class="nav-item" data-page="movetobank" onclick="showPage('movetobank')"><i class="bi bi-arrow-down-up"></i> Move to Bank</a>
-<div class="nav-section">Records</div>
-<a class="nav-item" data-page="transactions" onclick="showPage('transactions')"><i class="bi bi-clock-history"></i> Transactions</a>
-<a class="nav-item" data-page="ledger" onclick="showPage('ledger')"><i class="bi bi-journal-text"></i> Ledger</a>
-<a class="nav-item" data-page="downline" onclick="showPage('downline')"><i class="bi bi-people-fill"></i> Downline Users</a>
-<div class="nav-section">Account</div>
-<a class="nav-item" data-page="profile" onclick="showPage('profile')"><i class="bi bi-person-circle"></i> Profile</a>
-<a class="nav-item" data-page="settings" onclick="showPage('settings')"><i class="bi bi-gear-fill"></i> Settings</a>
-<a class="nav-item" onclick="handleLogout()" style="color:#ef4444"><i class="bi bi-box-arrow-left"></i> Logout</a>
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-cpu-fill"></i> API Settings <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="api-providers" onclick="showPage('api-providers')">API Providers</a>
+<a class="nav-item" data-page="api-operators" onclick="showPage('api-operators')">Operators</a>
+</div></div>
+
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-percent"></i> Commission <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="commission-rules" onclick="showPage('commission-rules')">Commission Rules</a>
+<a class="nav-item" data-page="commission-today" onclick="showPage('commission-today')">Today's Commission</a>
+</div></div>
+
+<div class="nav-section">Finance</div>
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-wallet2"></i> Wallet & Fund <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="wallet-adjust" onclick="showPage('wallet-adjust')">Wallet Adjust</a>
+<a class="nav-item" data-page="wallet-transfer" onclick="showPage('wallet-transfer')">Fund Transfer</a>
+<a class="nav-item" data-page="move-to-bank" onclick="showPage('move-to-bank')">Move to Bank Requests</a>
+</div></div>
+
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-credit-card-2-front-fill"></i> Payment Gateway <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="upi-settings" onclick="showPage('upi-settings')">UPI Settings</a>
+<a class="nav-item" data-page="payout-settings" onclick="showPage('payout-settings')">Pay-in / Payout API</a>
+</div></div>
+
+<div class="nav-section">Communication</div>
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-whatsapp"></i> Message Setup <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="whatsapp-settings" onclick="showPage('whatsapp-settings')">WhatsApp API</a>
+</div></div>
+
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-bell-fill"></i> Notification <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="send-notification" onclick="showPage('send-notification')">Send Notification</a>
+</div></div>
+
+<div class="nav-section">System</div>
+<div class="nav-parent" onclick="toggleParent(this)">
+<a class="nav-item"><i class="bi bi-gear-fill"></i> Settings <i class="bi bi-chevron-right caret"></i></a>
+<div class="sub-nav">
+<a class="nav-item" data-page="general-settings" onclick="showPage('general-settings')">General Settings</a>
+<a class="nav-item" data-page="banners" onclick="showPage('banners')">Banners</a>
+<a class="nav-item" data-page="audit-logs" onclick="showPage('audit-logs')">Audit Logs</a>
+</div></div>
+
+<a class="nav-item" onclick="handleLogout()" style="color:#ef4444;margin-top:8px"><i class="bi bi-box-arrow-left"></i> Logout</a>
 </nav>
 <div class="sidebar-footer">
 <div class="avatar" id="userAvatar">A</div>
 <div class="user-info">
 <div class="user-name" id="userName">Admin</div>
-<div class="user-role" id="userRole">Administrator</div>
+<div class="user-role" id="userRole">Super Admin</div>
 </div>
 </div>
 </aside>
 
 <main class="main">
 <header class="topbar">
-<div class="topbar-left">
+<div class="d-flex align-items-center gap-3">
 <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="toggleSidebar()"><i class="bi bi-list fs-5"></i></button>
 <h5 class="page-title mb-0" id="pageTitle">Dashboard</h5>
 </div>
-<div class="topbar-right">
-<span class="text-secondary small d-none d-md-inline" id="topbarBalance">Balance: <strong class="text-success" id="topBalance">₹0.00</strong></span>
-<div class="notification-badge" id="notifBadge"><i class="bi bi-bell fs-5 text-secondary" style="cursor:pointer" onclick="showPage('notifications')"></i></div>
+<div class="d-flex align-items-center gap-3">
+<span class="badge badge-success" style="font-size:.7rem"><i class="bi bi-circle-fill me-1" style="font-size:.4rem"></i> Live System</span>
+<span class="text-secondary small d-none d-md-inline" id="currentTime"></span>
 </div>
 </header>
 
 <div class="content">
 
-<!-- DASHBOARD PAGE -->
+<!-- ==================== DASHBOARD ==================== -->
 <div class="page active" id="page-dashboard">
-<div class="stat-grid" id="statGrid">
-<div class="stat-card"><div class="label">Wallet Balance</div><div class="value" id="sBalance">₹0.00</div><div class="sub">Available for transactions</div></div>
-<div class="stat-card green"><div class="label">Total Recharges</div><div class="value" id="sRecharges">0</div><div class="sub">All time successful</div></div>
-<div class="stat-card purple"><div class="label">Total Commissions</div><div class="value" id="sCommission">₹0.00</div><div class="sub">Earned to date</div></div>
-<div class="stat-card yellow"><div class="label">Pending TXN</div><div class="value" id="sPending">0</div><div class="sub">Awaiting confirmation</div></div>
+<div class="stat-grid">
+<div class="stat-card green"><div class="label">Success TXNS</div><div class="value" id="dSuccess">0</div><div class="sub">Successful today</div><i class="icon-bg bi bi-check-circle-fill"></i></div>
+<div class="stat-card orange"><div class="label">Pending TXNS</div><div class="value" id="dPending">0</div><div class="sub">Processing status</div><i class="icon-bg bi bi-clock-fill"></i></div>
+<div class="stat-card red"><div class="label">Failed TXNS</div><div class="value" id="dFailed">0</div><div class="sub">Failed today</div><i class="icon-bg bi bi-x-circle-fill"></i></div>
+<div class="stat-card purple"><div class="label">Total Wallet Balance</div><div class="value" id="dWallet">₹0</div><div class="sub">Across all users</div><i class="icon-bg bi bi-wallet2"></i></div>
 </div>
-<div class="row g-4 mb-4">
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('recharge')"><div class="service-icon blue"><i class="bi bi-phone-fill"></i></div><h5>Mobile Recharge</h5><p>Prepaid & Postpaid instant recharge</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('dth')"><div class="service-icon purple"><i class="bi bi-tv-fill"></i></div><h5>DTH Recharge</h5><p>All DTH operators supported</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('billpay')"><div class="service-icon green"><i class="bi bi-receipt-cutoff"></i></div><h5>Bill Payment</h5><p>Electricity, Gas, Water, Broadband</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('aeps')"><div class="service-icon yellow"><i class="bi bi-fingerprint"></i></div><h5>AEPS Cash</h5><p>Aadhaar cash withdrawal & balance</p></a></div>
+<div class="stat-grid">
+<div class="stat-card cyan"><div class="label">Master Distributors</div><div class="value" id="dMDs">0</div><div class="sub">Active Networks</div><i class="icon-bg bi bi-diagram-3-fill"></i></div>
+<div class="stat-card"><div class="label">Distributors</div><div class="value" id="dDist">0</div><div class="sub">Growth Network</div><i class="icon-bg bi bi-people-fill"></i></div>
+<div class="stat-card green"><div class="label">Total Retailers</div><div class="value" id="dRetailers">0</div><div class="sub">Connected Retailers</div><i class="icon-bg bi bi-person-badge-fill"></i></div>
+<div class="stat-card yellow"><div class="label">Pending Approvals</div><div class="value" id="dApprovals">0</div><div class="sub">Awaiting verification</div><i class="icon-bg bi bi-person-check-fill"></i></div>
 </div>
-<div class="row g-4 mb-4">
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('dmt')"><div class="service-icon red"><i class="bi bi-bank"></i></div><h5>Money Transfer</h5><p>IMPS / NEFT instant transfer</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('addmoney')"><div class="service-icon cyan"><i class="bi bi-qr-code-scan"></i></div><h5>Add Money</h5><p>UPI auto wallet loading</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('movetobank')"><div class="service-icon blue"><i class="bi bi-arrow-down-up"></i></div><h5>Move to Bank</h5><p>Withdraw to linked bank</p></a></div>
-<div class="col-md-6 col-lg-3"><a class="service-card" onclick="showPage('transactions')"><div class="service-icon green"><i class="bi bi-clock-history"></i></div><h5>Transactions</h5><p>View complete history</p></a></div>
-</div>
-<div class="table-container">
+<div class="table-container mt-4">
 <div class="p-3 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25">
 <h6 class="fw-bold mb-0">Recent Transactions</h6>
-<button class="btn btn-sm btn-outline-secondary" onclick="showPage('transactions')">View All</button>
+<button class="btn btn-sm-brand" onclick="showPage('report-transactions')">View All</button>
 </div>
 <div class="table-responsive">
-<table class="table">
-<thead><tr><th>Date</th><th>Number</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead>
-<tbody id="recentTxnBody"><tr><td colspan="5" class="text-center text-secondary py-4">No transactions yet</td></tr></tbody>
-</table>
+<table class="table"><thead><tr><th>TXN Ref</th><th>User</th><th>Operator</th><th>Number</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+<tbody id="dashRecentTxn"><tr><td colspan="7" class="text-center text-secondary py-4">No transactions yet</td></tr></tbody></table>
 </div>
 </div>
 </div>
 
-<!-- MOBILE RECHARGE PAGE -->
-<div class="page" id="page-recharge">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-phone-fill text-primary me-2"></i>Mobile Recharge</h6>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">Mobile Number</label><input type="tel" class="form-control" id="rcMobile" placeholder="Enter 10-digit number" maxlength="10"></div>
-<div class="col-md-6"><label class="form-label">Operator</label><select class="form-select" id="rcOperator"><option>Jio</option><option>Airtel</option><option>Vi (Vodafone Idea)</option><option>BSNL</option><option>MTNL</option></select></div>
-<div class="col-md-6"><label class="form-label">Circle</label><select class="form-select" id="rcCircle"><option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Chennai</option><option>Delhi</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jammu & Kashmir</option><option>Karnataka</option><option>Kerala</option><option>Kolkata</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Mumbai</option><option>North East</option><option>Orissa</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>UP East</option><option>UP West</option><option>West Bengal</option></select></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="rcAmount" placeholder="Enter amount" min="1"></div>
-<div class="col-12"><div id="rcResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doRecharge()"><i class="bi bi-lightning-fill me-1"></i> Recharge Now</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- DTH PAGE -->
-<div class="page" id="page-dth">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-tv-fill text-purple me-2" style="color:#a855f7"></i>DTH Recharge</h6>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">Customer ID / Number</label><input type="text" class="form-control" id="dthId" placeholder="Enter DTH ID"></div>
-<div class="col-md-6"><label class="form-label">Operator</label><select class="form-select" id="dthOperator"><option>Tata Play</option><option>Airtel Digital TV</option><option>Dish TV</option><option>Sun Direct</option><option>Videocon D2H</option></select></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="dthAmount" placeholder="Enter amount" min="1"></div>
-<div class="col-12"><div id="dthResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doDTH()"><i class="bi bi-lightning-fill me-1"></i> Recharge DTH</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- BILL PAY PAGE -->
-<div class="page" id="page-billpay">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-receipt-cutoff text-success me-2"></i>Bill Payment</h6>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">Bill Type</label><select class="form-select" id="bpType"><option>Electricity</option><option>Gas</option><option>Water</option><option>Broadband</option><option>Landline</option><option>Insurance</option><option>Loan EMI</option></select></div>
-<div class="col-md-6"><label class="form-label">Provider</label><input type="text" class="form-control" id="bpProvider" placeholder="e.g. BESCOM, JIO"></div>
-<div class="col-md-6"><label class="form-label">Consumer / Account Number</label><input type="text" class="form-control" id="bpAccount" placeholder="Enter account number"></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="bpAmount" placeholder="Enter amount" min="1"></div>
-<div class="col-12"><div id="bpResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doBillPay()"><i class="bi bi-lightning-fill me-1"></i> Pay Bill</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- AEPS PAGE -->
-<div class="page" id="page-aeps">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-fingerprint text-warning me-2"></i>AEPS Cash Withdrawal / Balance</h6>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">Transaction Type</label><select class="form-select" id="aepsType"><option value="WITHDRAWAL">Cash Withdrawal</option><option value="BALANCE_ENQ">Balance Enquiry</option><option value="MINI_STATEMENT">Mini Statement</option></select></div>
-<div class="col-md-6"><label class="form-label">Aadhaar Number</label><input type="tel" class="form-control" id="aepsAadhaar" placeholder="12-digit Aadhaar" maxlength="12"></div>
-<div class="col-md-6"><label class="form-label">Bank Name</label><select class="form-select" id="aepsBank"><option>SBI</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Punjab National Bank</option><option>Bank of Baroda</option><option>Canara Bank</option><option>Union Bank</option><option>Other</option></select></div>
-<div class="col-md-6"><label class="form-label">Amount (₹) — for withdrawal</label><input type="number" class="form-control" id="aepsAmount" placeholder="Enter amount" min="100"></div>
-<div class="col-12"><label class="form-label">Mobile Number</label><input type="tel" class="form-control" id="aepsMobile" placeholder="10-digit mobile" maxlength="10"></div>
-<div class="col-12"><div id="aepsResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doAEPS()"><i class="bi bi-lightning-fill me-1"></i> Process AEPS</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- DMT PAGE -->
-<div class="page" id="page-dmt">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-bank text-danger me-2"></i>Money Transfer (DMT)</h6>
-<div class="row g-3">
-<div class="col-12"><label class="form-label">Sender Mobile</label><input type="tel" class="form-control" id="dmtSenderMobile" placeholder="Sender's 10-digit mobile" maxlength="10"></div>
-<div class="col-md-6"><label class="form-label">Sender Name</label><input type="text" class="form-control" id="dmtSenderName" placeholder="Full name"></div>
-<div class="col-md-6"><label class="form-label">Sender Aadhaar / PAN</label><input type="text" class="form-control" id="dmtSenderId" placeholder="ID number"></div>
-<div class="col-12"><hr class="border-secondary border-opacity-25"><p class="text-secondary small fw-bold">BENEFICIARY DETAILS</p></div>
-<div class="col-md-6"><label class="form-label">Beneficiary Name</label><input type="text" class="form-control" id="dmtBenName" placeholder="Recipient name"></div>
-<div class="col-md-6"><label class="form-label">Beneficiary Mobile</label><input type="tel" class="form-control" id="dmtBenMobile" placeholder="10-digit mobile" maxlength="10"></div>
-<div class="col-md-6"><label class="form-label">Bank Account</label><input type="text" class="form-control" id="dmtBenAccount" placeholder="Account number"></div>
-<div class="col-md-6"><label class="form-label">IFSC Code</label><input type="text" class="form-control" id="dmtBenIfsc" placeholder="e.g. SBIN0001234"></div>
-<div class="col-md-6"><label class="form-label">Transfer Mode</label><select class="form-select" id="dmtMode"><option value="IMPS">IMPS (Instant)</option><option value="NEFT">NEFT</option><option value="RTGS">RTGS</option></select></div>
-<div class="col-md-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="dmtAmount" placeholder="Enter amount" min="100"></div>
-<div class="col-12"><div id="dmtResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doDMT()"><i class="bi bi-lightning-fill me-1"></i> Send Money</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ADD MONEY PAGE -->
-<div class="page" id="page-addmoney">
-<div class="row justify-content-center">
-<div class="col-lg-6">
-<div class="stat-card text-center">
-<h6 class="fw-bold mb-4"><i class="bi bi-qr-code-scan text-info me-2"></i>Add Money via UPI</h6>
-<div style="background:#fff;border-radius:16px;padding:24px;display:inline-block;margin-bottom:20px">
-<div style="width:200px;height:200px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center" id="qrCode">
-<span class="text-secondary small">QR Code</span>
-</div>
-</div>
-<p class="text-secondary small mb-3">Scan this QR with any UPI app to add money to your wallet</p>
-<div class="input-group mb-3"><span class="input-group-text bg-transparent border-secondary border-opacity-25 text-info">₹</span><input type="number" class="form-control" id="addAmount" placeholder="Or enter amount to generate dynamic QR" min="10"></div>
-<button class="btn btn-brand w-100" onclick="generateQR()"><i class="bi bi-qr-code me-1"></i> Generate Dynamic QR</button>
-</div>
-</div>
-</div>
-</div>
-
-<!-- MOVE TO BANK PAGE -->
-<div class="page" id="page-movetobank">
-<div class="row justify-content-center">
-<div class="col-lg-6">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-arrow-down-up text-primary me-2"></i>Move to Bank</h6>
-<div class="text-center mb-4">
-<div class="text-secondary small mb-1">Available Balance</div>
-<div class="fw-bold text-success" style="font-size:1.8rem" id="mtbBalance">₹0.00</div>
-</div>
-<div class="row g-3">
-<div class="col-12"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="mtbAmount" placeholder="Enter amount to withdraw" min="100"></div>
-<div class="col-md-6"><label class="form-label">Bank Name</label><input type="text" class="form-control" id="mtbBankName" placeholder="e.g. SBI, HDFC"></div>
-<div class="col-md-6"><label class="form-label">Account Holder Name</label><input type="text" class="form-control" id="mtbHolderName" placeholder="Name on bank account"></div>
-<div class="col-md-6"><label class="form-label">Account Number</label><input type="text" class="form-control" id="mtbAccount" placeholder="Full account number"></div>
-<div class="col-md-6"><label class="form-label">IFSC Code</label><input type="text" class="form-control" id="mtbIfsc" placeholder="e.g. SBIN0001234"></div>
-<div class="col-12"><div id="mtbResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand w-100" onclick="doMoveToBank()"><i class="bi bi-lightning-fill me-1"></i> Withdraw Now</button></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- TRANSACTIONS PAGE -->
-<div class="page" id="page-transactions">
-<div class="stat-card">
+<!-- ==================== ALL USERS ==================== -->
+<div class="page" id="page-users-all">
 <div class="d-flex justify-content-between align-items-center mb-4">
-<h6 class="fw-bold mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Transaction History</h6>
-<div class="d-flex gap-2">
-<select class="form-select form-select-sm" style="width:auto" id="txnFilter" onchange="loadTransactions()">
-<option value="">All Types</option><option value="RECHARGE">Recharge</option><option value="DTH">DTH</option><option value="BILL_PAY">Bill Pay</option><option value="AEPS">AEPS</option><option value="DMT">DMT</option><option value="ADD_MONEY">Add Money</option><option value="MOVE_BANK">Move to Bank</option>
-</select>
-<select class="form-select form-select-sm" style="width:auto" id="txnStatus" onchange="loadTransactions()">
-<option value="">All Status</option><option value="SUCCESS">Success</option><option value="PENDING">Pending</option><option value="FAILED">Failed</option>
-</select>
+<h6 class="fw-bold mb-0">All Users</h6>
+<button class="btn btn-sm-brand" onclick="showPage('users-add')"><i class="bi bi-plus-lg me-1"></i> Add User</button>
 </div>
+<div class="row g-2 mb-3">
+<div class="col-md-3"><input class="form-control form-control-sm" id="userSearch" placeholder="Search name/mobile/email" oninput="loadAllUsers()"></div>
+<div class="col-md-2"><select class="form-select form-select-sm" id="userRoleFilter" onchange="loadAllUsers()"><option value="">All Roles</option><option value="admin">Admin</option><option value="master_distributor">Master Distributor</option><option value="distributor">Distributor</option><option value="retailer">Retailer</option></select></div>
+<div class="col-md-2"><select class="form-select form-select-sm" id="userStatusFilter" onchange="loadAllUsers()"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="pending">Pending</option></select></div>
 </div>
-<div class="table-responsive">
-<table class="table">
-<thead><tr><th>Date</th><th>Type</th><th>Number / ID</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead>
-<tbody id="txnTableBody"><tr><td colspan="6" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
-</table>
-</div>
-</div>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>User ID</th><th>Name</th><th>Mobile</th><th>Role</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="allUsersBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
 </div>
 
-<!-- LEDGER PAGE -->
-<div class="page" id="page-ledger">
+<!-- ==================== ADD USER ==================== -->
+<div class="page" id="page-users-add">
+<div class="row justify-content-center"><div class="col-lg-7">
 <div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-journal-text text-primary me-2"></i>Wallet Ledger</h6>
-<div class="table-responsive">
-<table class="table">
-<thead><tr><th>Date</th><th>Description</th><th>Debit (₹)</th><th>Credit (₹)</th><th>Balance (₹)</th></tr></thead>
-<tbody id="ledgerBody"><tr><td colspan="5" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
-</table>
-</div>
-</div>
+<h6 class="fw-bold mb-4"><i class="bi bi-person-plus-fill text-primary me-2"></i>Create New User</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Full Name *</label><input class="form-control" id="nuName" placeholder="Full name"></div>
+<div class="col-md-6"><label class="form-label">Email</label><input class="form-control" id="nuEmail" type="email" placeholder="Email address"></div>
+<div class="col-md-6"><label class="form-label">Mobile *</label><input class="form-control" id="nuMobile" placeholder="10-digit mobile" maxlength="10"></div>
+<div class="col-md-6"><label class="form-label">Password *</label><input class="form-control" id="nuPassword" type="password" placeholder="Password"></div>
+<div class="col-md-6"><label class="form-label">Role *</label><select class="form-select" id="nuRole"><option value="retailer">Retailer</option><option value="distributor">Distributor</option><option value="master_distributor">Master Distributor</option></select></div>
+<div class="col-md-6"><label class="form-label">Parent User ID (optional)</label><input class="form-control" id="nuParent" placeholder="e.g. US123456"></div>
+<div class="col-12"><div id="nuResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="adminCreateUser()">Create User</button></div>
+</div></div></div></div>
 </div>
 
-<!-- DOWNLINE PAGE -->
-<div class="page" id="page-downline">
-<div class="stat-card">
+<!-- ==================== PENDING APPROVALS ==================== -->
+<div class="page" id="page-users-pending">
+<h6 class="fw-bold mb-4">Pending Approvals</h6>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>User ID</th><th>Name</th><th>Mobile</th><th>Role</th><th>Actions</th></tr></thead>
+<tbody id="pendingBody"><tr><td colspan="5" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== API PROVIDERS ==================== -->
+<div class="page" id="page-api-providers">
 <div class="d-flex justify-content-between align-items-center mb-4">
-<h6 class="fw-bold mb-0"><i class="bi bi-people-fill text-primary me-2"></i>Downline Users</h6>
-<button class="btn btn-sm btn-brand" onclick="openModal('addUserModal')"><i class="bi bi-plus-lg me-1"></i> Add User</button>
+<h6 class="fw-bold mb-0">API Providers</h6>
+<button class="btn btn-sm-brand" onclick="openModal('apiProviderModal')"><i class="bi bi-plus-lg me-1"></i> Add Provider</button>
 </div>
-<div class="table-responsive">
-<table class="table">
-<thead><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody id="downlineBody"><tr><td colspan="6" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
-</table>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Name</th><th>Code</th><th>URL</th><th>Priority</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="apiProvidersBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
 </div>
+
+<!-- ==================== OPERATORS ==================== -->
+<div class="page" id="page-api-operators">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0">Service Operators</h6>
+<button class="btn btn-sm-brand" onclick="openModal('operatorModal')"><i class="bi bi-plus-lg me-1"></i> Add Operator</button>
+</div>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Service</th><th>Operator</th><th>Code</th><th>Retailer Comm</th><th>Dist Comm</th><th>MD Comm</th><th>Status</th></tr></thead>
+<tbody id="operatorsBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== COMMISSION RULES ==================== -->
+<div class="page" id="page-commission-rules">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0">Commission Rules</h6>
+<button class="btn btn-sm-brand" onclick="openModal('commissionModal')"><i class="bi bi-plus-lg me-1"></i> Add Rule</button>
+</div>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Service</th><th>Operator</th><th>Role</th><th>Type</th><th>Value</th><th>Min</th><th>Max</th></tr></thead>
+<tbody id="commissionBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== TODAY'S COMMISSION ==================== -->
+<div class="page" id="page-commission-today">
+<h6 class="fw-bold mb-4">Today's Commission Summary</h6>
+<div class="stat-grid">
+<div class="stat-card"><div class="label">Retailer Commission</div><div class="value" id="tcRetailer">₹0</div></div>
+<div class="stat-card cyan"><div class="label">Distributor Commission</div><div class="value" id="tcDist">₹0</div></div>
+<div class="stat-card purple"><div class="label">MD Commission</div><div class="value" id="tcMD">₹0</div></div>
+<div class="stat-card green"><div class="label">Total Commission</div><div class="value" id="tcTotal">₹0</div></div>
 </div>
 </div>
 
-<!-- PROFILE PAGE -->
-<div class="page" id="page-profile">
-<div class="row justify-content-center">
-<div class="col-lg-7">
+<!-- ==================== WALLET ADJUST ==================== -->
+<div class="page" id="page-wallet-adjust">
+<div class="row justify-content-center"><div class="col-lg-6">
 <div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-person-circle text-primary me-2"></i>My Profile</h6>
+<h6 class="fw-bold mb-4"><i class="bi bi-wallet2 text-primary me-2"></i>Wallet Adjust</h6>
 <div class="row g-3">
-<div class="col-md-6"><label class="form-label">Full Name</label><input type="text" class="form-control" id="profName"></div>
-<div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="profEmail"></div>
-<div class="col-md-6"><label class="form-label">Mobile</label><input type="tel" class="form-control" id="profMobile"></div>
-<div class="col-md-6"><label class="form-label">Role</label><input type="text" class="form-control" id="profRole" disabled></div>
-<div class="col-md-6"><label class="form-label">Referral Code</label><input type="text" class="form-control" id="profReferral" disabled></div>
-<div class="col-12"><div id="profResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand" onclick="saveProfile()">Save Changes</button></div>
+<div class="col-12"><label class="form-label">User ID</label><input class="form-control" id="waUserId" placeholder="Enter user_id (e.g. US123456)"></div>
+<div class="col-md-6"><label class="form-label">Type</label><select class="form-select" id="waType"><option value="credit">Credit (+)</option><option value="debit">Debit (-)</option></select></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input class="form-control" id="waAmount" type="number" min="1" placeholder="Amount"></div>
+<div class="col-12"><label class="form-label">Description</label><input class="form-control" id="waDesc" placeholder="Reason for adjustment"></div>
+<div class="col-12"><div id="waResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="adminWalletAdjust()">Adjust Wallet</button></div>
+</div></div></div></div>
 </div>
-</div>
-<div class="stat-card mt-4">
-<h6 class="fw-bold mb-3">Change Password</h6>
+
+<!-- ==================== FUND TRANSFER ==================== -->
+<div class="page" id="page-wallet-transfer">
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-arrow-left-right text-primary me-2"></i>Fund Transfer (Admin → User)</h6>
 <div class="row g-3">
-<div class="col-12"><label class="form-label">Current Password</label><input type="password" class="form-control" id="pwCurrent"></div>
-<div class="col-md-6"><label class="form-label">New Password</label><input type="password" class="form-control" id="pwNew"></div>
-<div class="col-md-6"><label class="form-label">Confirm Password</label><input type="password" class="form-control" id="pwConfirm"></div>
-<div class="col-12"><div id="pwResult" class="alert d-none" style="border-radius:12px"></div></div>
-<div class="col-12"><button class="btn btn-brand" onclick="changePassword()">Update Password</button></div>
-</div>
-</div>
-</div>
-</div>
+<div class="col-12"><label class="form-label">Recipient User ID</label><input class="form-control" id="ftToUser" placeholder="Enter user_id"></div>
+<div class="col-md-6"><label class="form-label">Amount (₹)</label><input class="form-control" id="ftAmount" type="number" min="1" placeholder="Amount"></div>
+<div class="col-md-6"><label class="form-label">Description</label><input class="form-control" id="ftDesc" placeholder="Optional note"></div>
+<div class="col-12"><div id="ftResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="adminFundTransfer()">Transfer Now</button></div>
+</div></div></div></div>
 </div>
 
-<!-- SETTINGS PAGE -->
-<div class="page" id="page-settings">
-<div class="row justify-content-center">
-<div class="col-lg-7">
-<div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-gear-fill text-primary me-2"></i>Settings</h6>
-<div class="d-flex flex-column gap-3">
-<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">Email Notifications</strong><small class="text-secondary">Receive transaction alerts via email</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
-<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">SMS Notifications</strong><small class="text-secondary">Get SMS for wallet updates</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked></div></div>
-<div class="d-flex justify-content-between align-items-center p-3" style="background:rgba(255,255,255,0.03);border-radius:12px"><div><strong class="text-white d-block">2FA Security</strong><small class="text-secondary">Two-factor authentication on login</small></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox"></div></div>
-</div>
-</div>
-</div>
-</div>
+<!-- ==================== MOVE TO BANK ==================== -->
+<div class="page" id="page-move-to-bank">
+<h6 class="fw-bold mb-4">Move to Bank Requests</h6>
+<div class="mb-3"><select class="form-select form-select-sm" style="width:auto" id="mtbStatusFilter" onchange="loadMoveToBank()"><option value="">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>User</th><th>Amount</th><th>Bank</th><th>Account</th><th>IFSC</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="mtbBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
 </div>
 
-<!-- NOTIFICATIONS PAGE -->
-<div class="page" id="page-notifications">
+<!-- ==================== UPI SETTINGS ==================== -->
+<div class="page" id="page-upi-settings">
+<div class="row justify-content-center"><div class="col-lg-6">
 <div class="stat-card">
-<h6 class="fw-bold mb-4"><i class="bi bi-bell-fill text-primary me-2"></i>Notifications</h6>
-<div id="notifList"><div class="empty-state"><i class="bi bi-bell-slash"></i><p>No notifications yet</p></div></div>
+<h6 class="fw-bold mb-4"><i class="bi bi-qr-code text-primary me-2"></i>UPI Settings</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">UPI ID</label><input class="form-control" id="upiId" placeholder="e.g. 1234567890@paytm"></div>
+<div class="col-md-6"><label class="form-label">Merchant Name</label><input class="form-control" id="upiMerchant" placeholder="RSRecharge"></div>
+<div class="col-md-6"><label class="form-label">QR Image URL</label><input class="form-control" id="upiQR" placeholder="Optional QR image URL"></div>
+<div class="col-md-6"><label class="form-label">UPI Enabled</label><select class="form-select" id="upiEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><div id="upiResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveUPISettings()">Save UPI Settings</button></div>
+</div></div></div></div>
 </div>
+
+<!-- ==================== PAYOUT SETTINGS ==================== -->
+<div class="page" id="page-payout-settings">
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-credit-card-2-front-fill text-primary me-2"></i>Pay-in / Payout API Settings</h6>
+<p class="text-secondary small mb-3">Configure your third-party payment gateway APIs for automated pay-in and pay-out processing.</p>
+<div class="row g-3">
+<div class="col-12"><hr class="border-secondary border-opacity-25"><p class="text-secondary small fw-bold">Payout API (Settlement)</p></div>
+<div class="col-md-6"><label class="form-label">API URL</label><input class="form-control" id="payApiUrl" placeholder="https://api.example.com/payout"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="payApiKey" type="password" placeholder="API Key"></div>
+<div class="col-md-6"><label class="form-label">Merchant ID</label><input class="form-control" id="payMerchantId" placeholder="Merchant ID"></div>
+<div class="col-md-6"><label class="form-label">Payout Enabled</label><select class="form-select" id="payEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><hr class="border-secondary border-opacity-25"><p class="text-secondary small fw-bold">Pay-in API (Collection)</p></div>
+<div class="col-md-6"><label class="form-label">API URL</label><input class="form-control" id="payinUrl" placeholder="https://api.example.com/payin"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="payinKey" type="password" placeholder="API Key"></div>
+<div class="col-md-6"><label class="form-label">Pay-in Enabled</label><select class="form-select" id="payinEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><div id="payoutResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="savePayoutSettings()">Save Settings</button></div>
+</div></div></div></div>
+</div>
+
+<!-- ==================== WHATSAPP SETTINGS ==================== -->
+<div class="page" id="page-whatsapp-settings">
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-whatsapp text-success me-2"></i>WhatsApp API Settings</h6>
+<div class="row g-3">
+<div class="col-12"><label class="form-label">WhatsApp API URL</label><input class="form-control" id="waApiUrl" placeholder="https://api.whatsapp.com/send"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="waApiKey" type="password" placeholder="API Key"></div>
+<div class="col-md-6"><label class="form-label">Sender Number</label><input class="form-control" id="waSender" placeholder="+91XXXXXXXXXX"></div>
+<div class="col-md-6"><label class="form-label">Template ID</label><input class="form-control" id="waTemplate" placeholder="Template ID"></div>
+<div class="col-md-6"><label class="form-label">WhatsApp Enabled</label><select class="form-select" id="waEnabled"><option value="1">Yes</option><option value="0">No</option></select></div>
+<div class="col-12"><div id="waResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveWhatsAppSettings()">Save WhatsApp Settings</button></div>
+</div></div></div></div>
+</div>
+
+<!-- ==================== SEND NOTIFICATION ==================== -->
+<div class="page" id="page-send-notification">
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-bell-fill text-primary me-2"></i>Send Notification</h6>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Send To</label><select class="form-select" id="notifTarget"><option value="">Select Target</option><option value="all">All Users</option><option value="admin">Admins</option><option value="master_distributor">Master Distributors</option><option value="distributor">Distributors</option><option value="retailer">Retailers</option></select></div>
+<div class="col-md-6"><label class="form-label">Type</label><select class="form-select" id="notifType"><option value="info">Info</option><option value="success">Success</option><option value="warning">Warning</option><option value="error">Error</option></select></div>
+<div class="col-12"><label class="form-label">Title</label><input class="form-control" id="notifTitle" placeholder="Notification title"></div>
+<div class="col-12"><label class="form-label">Message</label><textarea class="form-control" id="notifMessage" rows="3" placeholder="Notification message"></textarea></div>
+<div class="col-12"><div id="notifResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="sendNotification()"><i class="bi bi-send me-1"></i> Send Notification</button></div>
+</div></div></div></div>
+</div>
+
+<!-- ==================== GENERAL SETTINGS ==================== -->
+<div class="page" id="page-general-settings">
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="stat-card">
+<h6 class="fw-bold mb-4"><i class="bi bi-gear-fill text-primary me-2"></i>General Settings</h6>
+<div id="settingsBody" class="row g-3"><div class="col-12 text-center text-secondary py-4">Loading settings...</div></div>
+<div class="col-12 mt-3"><div id="settingsResult" class="alert d-none" style="border-radius:10px"></div></div>
+<div class="col-12"><button class="btn btn-brand" onclick="saveGeneralSettings()">Save Settings</button></div>
+</div></div></div>
+</div>
+
+<!-- ==================== BANNERS ==================== -->
+<div class="page" id="page-banners">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h6 class="fw-bold mb-0">Banner Management</h6>
+<button class="btn btn-sm-brand" onclick="openModal('bannerModal')"><i class="bi bi-plus-lg me-1"></i> Add Banner</button>
+</div>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Title</th><th>Target</th><th>Sort</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="bannersBody"><tr><td colspan="5" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== AUDIT LOGS ==================== -->
+<div class="page" id="page-audit-logs">
+<h6 class="fw-bold mb-4">Audit Logs</h6>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Date</th><th>User</th><th>Action</th><th>Details</th><th>IP</th></tr></thead>
+<tbody id="auditBody"><tr><td colspan="5" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
+</div>
+
+<!-- ==================== REPORTS (placeholder) ==================== -->
+<div class="page" id="page-report-transactions">
+<h6 class="fw-bold mb-4">Transaction Report</h6>
+<div class="table-container"><div class="table-responsive"><table class="table">
+<thead><tr><th>Date</th><th>TXN Ref</th><th>User</th><th>Type</th><th>Number</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody id="reportTxnBody"><tr><td colspan="7" class="text-center text-secondary py-4">Loading...</td></tr></tbody>
+</table></div></div>
 </div>
 
 </div>
 </main>
 
-<!-- ADD USER MODAL -->
-<div class="modal fade" id="addUserModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
-<div class="modal-header"><h5 class="modal-title">Add Downline User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<!-- ==================== MODALS ==================== -->
+<div class="modal fade" id="apiProviderModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add API Provider</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="row g-3">
-<div class="col-12"><label class="form-label">Full Name</label><input type="text" class="form-control" id="newUserName"></div>
-<div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="newUserEmail"></div>
-<div class="col-md-6"><label class="form-label">Mobile</label><input type="tel" class="form-control" id="newUserMobile" maxlength="10"></div>
-<div class="col-md-6"><label class="form-label">Password</label><input type="password" class="form-control" id="newUserPassword"></div>
-<div class="col-md-6"><label class="form-label">Role</label><select class="form-select" id="newUserRole"><option value="RETAILER">Retailer</option><option value="DISTRIBUTOR">Distributor</option><option value="MASTER_DISTRIBUTOR">Master Distributor</option></select></div>
-</div>
-</div>
-<div class="modal-footer"><button class="btn btn-outline-brand" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="addUser()">Create User</button></div>
+<div class="col-md-6"><label class="form-label">Name *</label><input class="form-control" id="apName"></div>
+<div class="col-md-6"><label class="form-label">Code *</label><input class="form-control" id="apCode"></div>
+<div class="col-12"><label class="form-label">Base URL</label><input class="form-control" id="apUrl"></div>
+<div class="col-md-6"><label class="form-label">API Key</label><input class="form-control" id="apKey"></div>
+<div class="col-md-6"><label class="form-label">API Secret</label><input class="form-control" id="apSecret"></div>
+<div class="col-md-6"><label class="form-label">Priority</label><input class="form-control" id="apPriority" type="number" value="1"></div>
+<div class="col-md-6"><label class="form-label">Active</label><select class="form-select" id="apActive"><option value="1">Yes</option><option value="0">No</option></select></div>
+</div></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveAPIProvider()">Save</button></div>
+</div></div></div>
+
+<div class="modal fade" id="operatorModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add Operator</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Service Type *</label><select class="form-select" id="opService"><option value="MOBILE">Mobile</option><option value="DTH">DTH</option><option value="ELECTRICITY">Electricity</option><option value="GAS">Gas</option><option value="WATER">Water</option><option value="BROADBAND">Broadband</option></select></div>
+<div class="col-md-6"><label class="form-label">Operator Name *</label><input class="form-control" id="opName"></div>
+<div class="col-md-6"><label class="form-label">Operator Code *</label><input class="form-control" id="opCode"></div>
+<div class="col-md-6"><label class="form-label">Retailer Commission (%)</label><input class="form-control" id="opCommR" type="number" step="0.01" value="0"></div>
+<div class="col-md-6"><label class="form-label">Distributor Commission (%)</label><input class="form-control" id="opCommD" type="number" step="0.01" value="0"></div>
+<div class="col-md-6"><label class="form-label">MD Commission (%)</label><input class="form-control" id="opCommMD" type="number" step="0.01" value="0"></div>
+</div></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveOperator()">Save</button></div>
+</div></div></div>
+
+<div class="modal fade" id="commissionModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add Commission Rule</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label">Service Type *</label><select class="form-select" id="cmService"><option value="MOBILE">Mobile</option><option value="DTH">DTH</option><option value="ELECTRICITY">Electricity</option><option value="GAS">Gas</option><option value="WATER">Water</option></select></div>
+<div class="col-md-6"><label class="form-label">Operator Code</label><input class="form-control" id="cmOperator" placeholder="Leave blank for all"></div>
+<div class="col-md-6"><label class="form-label">Role *</label><select class="form-select" id="cmRole"><option value="retailer">Retailer</option><option value="distributor">Distributor</option><option value="master_distributor">Master Distributor</option></select></div>
+<div class="col-md-6"><label class="form-label">Type</label><select class="form-select" id="cmType"><option value="percentage">Percentage (%)</option><option value="fixed">Fixed (₹)</option></select></div>
+<div class="col-md-6"><label class="form-label">Value *</label><input class="form-control" id="cmValue" type="number" step="0.01"></div>
+<div class="col-md-3"><label class="form-label">Min Amount</label><input class="form-control" id="cmMin" type="number" value="0"></div>
+<div class="col-md-3"><label class="form-label">Max Amount</label><input class="form-control" id="cmMax" type="number" value="999999"></div>
+</div></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveCommissionRule()">Save</button></div>
+</div></div></div>
+
+<div class="modal fade" id="bannerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Add Banner</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3">
+<div class="col-12"><label class="form-label">Title</label><input class="form-control" id="bnTitle"></div>
+<div class="col-12"><label class="form-label">Image URL</label><input class="form-control" id="bnImage"></div>
+<div class="col-md-6"><label class="form-label">Link URL</label><input class="form-control" id="bnLink"></div>
+<div class="col-md-6"><label class="form-label">Target Role</label><select class="form-select" id="bnTarget"><option value="all">All</option><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select></div>
+<div class="col-md-6"><label class="form-label">Sort Order</label><input class="form-control" id="bnSort" type="number" value="0"></div>
+<div class="col-md-6"><label class="form-label">Active</label><select class="form-select" id="bnActive"><option value="1">Yes</option><option value="0">No</option></select></div>
+</div></div>
+<div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-brand" onclick="saveBanner()">Save</button></div>
 </div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -465,32 +521,30 @@ const user=()=>{try{return JSON.parse(localStorage.getItem('user'))}catch{return
 const headers=()=>({'Content-Type':'application/json','Authorization':`Bearer ${token()}`});
 const u=user();
 if(!u||!token()){window.location.href='/login.html'}
-document.getElementById('userName').textContent=u?.name||'User';
-document.getElementById('userRole').textContent=(u?.role||'').replace(/_/g,' ');
-document.getElementById('userAvatar').textContent=(u?.name||'U')[0].toUpperCase();
+if(u&&u.role!=='admin'&&u.role!=='superadmin'){document.getElementById('sidebarNav').innerHTML='<div class="text-center text-secondary py-5"><i class="bi bi-shield-x fs-1 d-block mb-2"></i>Admin access required</div>'}
+
+document.getElementById('userName').textContent=u?.name||'Admin';
+document.getElementById('userRole').textContent=(u?.role||'admin').replace(/_/g,' ');
+document.getElementById('userAvatar').textContent=(u?.name||'A')[0].toUpperCase();
 
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open')}
+function toggleParent(el){el.classList.toggle('open')}
 function openModal(id){new bootstrap.Modal(document.getElementById(id)).show()}
 
 function showPage(p){
 document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
 document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-const page=document.getElementById('page-'+p);
-if(page){page.classList.add('active');document.querySelector(`[data-page="${p}"]`)?.classList.add('active')}
-const titles={dashboard:'Dashboard',recharge:'Mobile Recharge',dth:'DTH Recharge',billpay:'Bill Payment',aeps:'AEPS Cash',dmt:'Money Transfer',wallet:'My Wallet',addmoney:'Add Money (UPI)',movetobank:'Move to Bank',transactions:'Transaction History',ledger:'Wallet Ledger',downline:'Downline Users',profile:'Profile',settings:'Settings',notifications:'Notifications'};
+const pg=document.getElementById('page-'+p);
+if(pg){pg.classList.add('active');document.querySelector(`[data-page="${p}"]`)?.classList.add('active')}
+const titles={dashboard:'Admin Dashboard','users-all':'All Users','users-add':'Add User','users-pending':'Pending Approvals','api-providers':'API Providers','api-operators':'Operators','commission-rules':'Commission Rules','commission-today':"Today's Commission",'wallet-adjust':'Wallet Adjust','wallet-transfer':'Fund Transfer','move-to-bank':'Move to Bank Requests','upi-settings':'UPI Settings','payout-settings':'Pay-in / Payout Settings','whatsapp-settings':'WhatsApp Settings','send-notification':'Send Notification','general-settings':'General Settings',banners:'Banners','audit-logs':'Audit Logs','report-transactions':'Transaction Report'};
 document.getElementById('pageTitle').textContent=titles[p]||'Dashboard';
-if(p==='transactions')loadTransactions();
-if(p==='ledger')loadLedger();
-if(p==='downline')loadDownline();
-if(p==='profile')loadProfile();
-if(p==='dashboard')loadDashboard();
-if(p==='movetobank')document.getElementById('mtbBalance').textContent=document.getElementById('sBalance')?.textContent||'₹0.00';
 if(window.innerWidth<992)toggleSidebar();
+loadPageData(p);
 }
 
 async function apiFetch(path,opts={}){
 try{const r=await fetch(API+path,{...opts,headers:headers()});
-if(r.status===401){localStorage.clear();window.location.href='/login.html';return null}
+if(r.status===401||r.status===403){localStorage.clear();window.location.href='/login.html';return null}
 return await r.json()}catch(e){console.error(e);return null}
 }
 
@@ -500,128 +554,287 @@ el.className='alert';el.classList.add(type==='success'?'alert-success':'alert-da
 el.style.background=type==='success'?'rgba(34,197,94,0.15)':'rgba(239,68,68,0.15)';
 el.style.color=type==='success'?'#22c55e':'#fca5a5';
 el.style.border=`1px solid ${type==='success'?'rgba(34,197,94,0.25)':'rgba(239,68,68,0.25)'}`;
-el.textContent=msg;el.classList.remove('d-none');
-if(type==='success')setTimeout(()=>el.classList.add('d-none'),5000);
+el.style.borderRadius='10px';el.textContent=msg;el.classList.remove('d-none');
+if(type==='success')setTimeout(()=>el.classList.add('d-none'),4000);
 }
 
 function renderTxnRow(t){
-const statusClass=t.status==='SUCCESS'?'badge-success':t.status==='PENDING'?'badge-pending':'badge-failed';
-return `<tr><td class="text-nowrap">${new Date(t.created_at).toLocaleDateString('en-IN')}</td><td>${t.type||'-'}</td><td>${t.reference_id||t.number||'-'}</td><td>${t.operator||'-'}</td><td>₹${Number(t.amount).toFixed(2)}</td><td><span class="${statusClass}">${t.status}</span></td></tr>`;
+const sc=t.status==='success'?'badge-success':t.status==='pending'?'badge-pending':'badge-failed';
+return `<tr><td>${t.id||'-'}</td><td>${t.user_name||t.user_id||'-'}</td><td>${t.operator||t.service_type||'-'}</td><td>${t.number||t.reference_id||'-'}</td><td>₹${Number(t.amount||0).toFixed(2)}</td><td><span class="${sc}">${t.status||'-'}</span></td><td>${t.created_at?new Date(t.created_at).toLocaleDateString('en-IN'):''}</td></tr>`;
 }
 
+async function loadPageData(p){
+if(p==='dashboard')await loadDashboard();
+else if(p==='users-all')await loadAllUsers();
+else if(p==='users-pending')await loadPendingUsers();
+else if(p==='api-providers')await loadAPIProviders();
+else if(p==='api-operators')await loadOperators();
+else if(p==='commission-rules')await loadCommissionRules();
+else if(p==='commission-today')await loadTodayCommission();
+else if(p==='move-to-bank')await loadMoveToBank();
+else if(p==='upi-settings')await loadUPISettings();
+else if(p==='payout-settings')await loadPayoutSettings();
+else if(p==='whatsapp-settings')await loadWhatsAppSettings();
+else if(p==='general-settings')await loadGeneralSettings();
+else if(p==='banners')await loadBanners();
+else if(p==='audit-logs')await loadAuditLogs();
+else if(p==='report-transactions')await loadReportTransactions();
+}
+
+// ===== DASHBOARD =====
 async function loadDashboard(){
-const d=await apiFetch('/dashboard');
-if(!d||!d.success)return;
-const s=d.data;
-const isAdmin=u?.role==='admin'||u?.role==='superadmin';
-const balance=isAdmin?s.totalWalletBalance:s.walletBalance;
-document.getElementById('sBalance').textContent='₹'+Number(balance||0).toFixed(2);
-document.getElementById('sRecharges').textContent=isAdmin?s.todayTransactions:s.todaySuccess||s.todayRecharges||0;
-document.getElementById('sCommission').textContent='₹'+Number(s.todayCommission||0).toFixed(2);
-document.getElementById('sPending').textContent=isAdmin?s.pendingApprovals:s.todayPending||0;
-document.getElementById('topBalance').textContent='₹'+Number(balance||0).toFixed(2);
-const txns=s.recentTransactions||s.recentTransactions||[];
-const tbody=document.getElementById('recentTxnBody');
-if(txns.length)tbody.innerHTML=txns.slice(0,5).map(renderTxnRow).join('');
+const d=await apiFetch('/admin/dashboard');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('dSuccess').textContent='₹'+Number(s.todayRevenue||0).toFixed(2);
+document.getElementById('dPending').textContent=s.todayTransactions||0;
+document.getElementById('dFailed').textContent='₹'+Number(s.todayTransactionAmount||0).toFixed(2);
+document.getElementById('dWallet').textContent='₹'+Number(s.totalWalletBalance||0).toFixed(2);
+document.getElementById('dMDs').textContent=s.totalMDs||0;
+document.getElementById('dDist').textContent=s.totalDistributors||0;
+document.getElementById('dRetailers').textContent=s.totalRetailers||0;
+document.getElementById('dApprovals').textContent=s.pendingApprovals||0;
+const txn=s.recentTransactions||[];
+document.getElementById('dashRecentTxn').innerHTML=txn.length?txn.map(renderTxnRow).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No transactions yet</td></tr>';
 }
 
-async function loadTransactions(){
-const filter=document.getElementById('txnFilter').value;
-const status=document.getElementById('txnStatus').value;
-let qs=new URLSearchParams();if(filter)qs.set('type',filter);if(status)qs.set('status',status);
-const d=await apiFetch('/transactions?'+qs);
+// ===== USERS =====
+async function loadAllUsers(){
+const search=document.getElementById('userSearch')?.value||'';
+const role=document.getElementById('userRoleFilter')?.value||'';
+const status=document.getElementById('userStatusFilter')?.value||'';
+let qs=new URLSearchParams();if(search)qs.set('search',search);if(role)qs.set('role',role);if(status)qs.set('status',status);
+const d=await apiFetch('/admin/users?'+qs);
+if(!d||!d.success)return;
+const users=d.data?.users||[];
+document.getElementById('allUsersBody').innerHTML=users.length?users.map(u=>{
+const sc=u.is_active?'badge-success':'badge-failed';
+return `<tr><td>${u.user_id||'-'}</td><td>${u.name}</td><td>${u.mobile||'-'}</td><td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="padding:3px 8px;border-radius:6px;font-size:.68rem">${(u.role||'').replace(/_/g,' ')}</span></td><td>₹${Number(u.balance||0).toFixed(2)}</td><td><span class="${sc}">${u.is_active?'Active':'Inactive'}</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm btn-outline-secondary" onclick="toggleUserStatus(${u.id},${u.is_active})"><i class="bi bi-${u.is_active?'lock':'unlock'}-fill"></i></button></div></td></tr>`;
+}).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No users found</td></tr>';
+}
+
+async function toggleUserStatus(id,current){
+const d=await apiFetch(`/admin/users/${id}/toggle-status`,{method:'PUT'});
+if(d?.success)loadAllUsers();
+}
+
+async function adminCreateUser(){
+const d=await apiFetch('/admin/users',{method:'POST',body:JSON.stringify({name:document.getElementById('nuName').value,email:document.getElementById('nuEmail').value,mobile:document.getElementById('nuMobile').value,password:document.getElementById('nuPassword').value,role:document.getElementById('nuRole').value,parent_id:document.getElementById('nuParent').value||undefined})});
+showResult('nuResult',d?.success?'User created successfully!':(d?.message||'Failed'),d?.success?'success':'error');
+if(d?.success){document.getElementById('nuName').value='';document.getElementById('nuEmail').value='';document.getElementById('nuMobile').value='';document.getElementById('nuPassword').value='';document.getElementById('nuParent').value=''}
+}
+
+async function loadPendingUsers(){
+const d=await apiFetch('/admin/users?status=pending');
+if(!d||!d.success)return;
+const users=d.data?.users||[];
+document.getElementById('pendingBody').innerHTML=users.length?users.map(u=>`<tr><td>${u.user_id||'-'}</td><td>${u.name}</td><td>${u.mobile||'-'}</td><td>${(u.role||'').replace(/_/g,' ')}</td><td><div class="d-flex gap-1"><button class="btn btn-sm btn-outline-success" onclick="approveUser(${u.id})"><i class="bi bi-check-lg"></i> Approve</button><button class="btn btn-sm btn-outline-danger" onclick="rejectUser(${u.id})"><i class="bi bi-x-lg"></i></button></div></td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-secondary py-4">No pending approvals</td></tr>';
+}
+
+async function approveUser(id){
+const d=await apiFetch(`/admin/users/${id}/approve`,{method:'PUT'});
+if(d?.success)loadPendingUsers();
+}
+async function rejectUser(id){
+const d=await apiFetch(`/admin/users/${id}/toggle-status`,{method:'PUT'});
+if(d?.success)loadPendingUsers();
+}
+
+// ===== API PROVIDERS =====
+async function loadAPIProviders(){
+const d=await apiFetch('/admin/api-providers');
+if(!d||!d.success)return;
+const ps=d.data||[];
+document.getElementById('apiProvidersBody').innerHTML=ps.length?ps.map(p=>`<tr><td>${p.name}</td><td>${p.code}</td><td class="text-truncate" style="max-width:200px">${p.base_url||'-'}</td><td>${p.priority||1}</td><td>₹${Number(p.balance||0).toFixed(2)}</td><td><span class="${p.is_active?'badge-success':'badge-failed'}">${p.is_active?'Active':'Inactive'}</span></td><td>-</td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No API providers configured</td></tr>';
+}
+
+async function saveAPIProvider(){
+const d=await apiFetch('/admin/api-providers',{method:'POST',body:JSON.stringify({name:document.getElementById('apName').value,code:document.getElementById('apCode').value,base_url:document.getElementById('apUrl').value,api_key:document.getElementById('apKey').value,api_secret:document.getElementById('apSecret').value,priority:parseInt(document.getElementById('apPriority').value)||1,is_active:document.getElementById('apActive').value==='1'})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('apiProviderModal')).hide();loadAPIProviders()}
+}
+
+// ===== OPERATORS =====
+async function loadOperators(){
+const d=await apiFetch('/admin/operators');
+if(!d||!d.success)return;
+const ops=d.data||[];
+document.getElementById('operatorsBody').innerHTML=ops.length?ops.map(o=>`<tr><td>${o.service_type}</td><td>${o.operator_name}</td><td>${o.operator_code}</td><td>${o.commission_retailer}%</td><td>${o.commission_distributor}%</td><td>${o.commission_md}%</td><td><span class="${o.is_active?'badge-success':'badge-failed'}">${o.is_active?'Active':'Inactive'}</span></td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No operators configured</td></tr>';
+}
+
+async function saveOperator(){
+const d=await apiFetch('/admin/operators',{method:'POST',body:JSON.stringify({service_type:document.getElementById('opService').value,operator_name:document.getElementById('opName').value,operator_code:document.getElementById('opCode').value,commission_retailer:parseFloat(document.getElementById('opCommR').value)||0,commission_distributor:parseFloat(document.getElementById('opCommD').value)||0,commission_md:parseFloat(document.getElementById('opCommMD').value)||0})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('operatorModal')).hide();loadOperators()}
+}
+
+// ===== COMMISSION =====
+async function loadCommissionRules(){
+const d=await apiFetch('/admin/commissions');
+if(!d||!d.success)return;
+const rules=d.data||[];
+document.getElementById('commissionBody').innerHTML=rules.length?rules.map(r=>`<tr><td>${r.service_type}</td><td>${r.operator_code||'All'}</td><td>${(r.role||'').replace(/_/g,' ')}</td><td>${r.commission_type}</td><td>${r.commission_value}${r.commission_type==='percentage'?'%':'₹'}</td><td>₹${r.min_amount||0}</td><td>₹${r.max_amount||999999}</td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No commission rules defined</td></tr>';
+}
+
+async function saveCommissionRule(){
+const d=await apiFetch('/admin/commissions',{method:'POST',body:JSON.stringify({service_type:document.getElementById('cmService').value,operator_code:document.getElementById('cmOperator').value,role:document.getElementById('cmRole').value,commission_type:document.getElementById('cmType').value,commission_value:parseFloat(document.getElementById('cmValue').value),min_amount:parseFloat(document.getElementById('cmMin').value)||0,max_amount:parseFloat(document.getElementById('cmMax').value)||999999})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('commissionModal')).hide();loadCommissionRules()}
+}
+
+async function loadTodayCommission(){
+const d=await apiFetch('/admin/today-commission');
+if(!d||!d.success)return;const c=d.data;
+document.getElementById('tcRetailer').textContent='₹'+Number(c.retailer||0).toFixed(2);
+document.getElementById('tcDist').textContent='₹'+Number(c.distributor||0).toFixed(2);
+document.getElementById('tcMD').textContent='₹'+Number(c.master_distributor||0).toFixed(2);
+document.getElementById('tcTotal').textContent='₹'+Number(c.total||0).toFixed(2);
+}
+
+// ===== WALLET =====
+async function adminWalletAdjust(){
+const d=await apiFetch('/admin/wallet-adjust',{method:'POST',body:JSON.stringify({user_id:parseInt(document.getElementById('waUserId').value),amount:parseFloat(document.getElementById('waAmount').value),type:document.getElementById('waType').value,description:document.getElementById('waDesc').value})});
+showResult('waResult',d?.success?'Wallet adjusted successfully!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+async function adminFundTransfer(){
+const d=await apiFetch('/admin/wallet-transfer',{method:'POST',body:JSON.stringify({to_user_id:parseInt(document.getElementById('ftToUser').value),amount:parseFloat(document.getElementById('ftAmount').value),description:document.getElementById('ftDesc').value})});
+showResult('ftResult',d?.success?'Transfer successful!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== MOVE TO BANK =====
+async function loadMoveToBank(){
+const status=document.getElementById('mtbStatusFilter')?.value||'';
+let qs=new URLSearchParams();if(status)qs.set('status',status);
+const d=await apiFetch('/admin/move-to-bank?'+qs);
+if(!d||!d.success)return;
+const reqs=d.data||[];
+document.getElementById('mtbBody').innerHTML=reqs.length?reqs.map(r=>{
+const sc=r.status==='approved'?'badge-success':r.status==='rejected'?'badge-failed':'badge-pending';
+const btns=r.status==='pending'?`<div class="d-flex gap-1"><button class="btn btn-sm btn-outline-success" onclick="processMTB(${r.id},'approved')">Approve</button><button class="btn btn-sm btn-outline-danger" onclick="processMTB(${r.id},'rejected')">Reject</button></div>`:'-';
+return `<tr><td>${r.user_name||'-'}</td><td>₹${Number(r.amount).toFixed(2)}</td><td>${r.bank_name||'-'}</td><td>${r.account_number||'-'}</td><td>${r.ifsc_code||'-'}</td><td><span class="${sc}">${r.status}</span></td><td>${btns}</td></tr>`;
+}).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No requests found</td></tr>';
+}
+
+async function processMTB(id,status){
+const d=await apiFetch(`/admin/move-to-bank/${id}`,{method:'PUT',body:JSON.stringify({status})});
+if(d?.success)loadMoveToBank();
+}
+
+// ===== UPI =====
+async function loadUPISettings(){
+const d=await apiFetch('/admin/upi-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('upiId').value=s.upi_id||'';
+document.getElementById('upiMerchant').value=s.merchant_name||'';
+document.getElementById('upiQR').value=s.qr_image||'';
+document.getElementById('upiEnabled').value=s.upi_enabled||'1';
+}
+
+async function saveUPISettings(){
+const d=await apiFetch('/admin/upi-settings',{method:'PUT',body:JSON.stringify({upi_id:document.getElementById('upiId').value,merchant_name:document.getElementById('upiMerchant').value,qr_image:document.getElementById('upiQR').value,upi_enabled:document.getElementById('upiEnabled').value==='1'})});
+showResult('upiResult',d?.success?'UPI settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== PAYOUT =====
+async function loadPayoutSettings(){
+const d=await apiFetch('/admin/payout-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('payApiUrl').value=s.payout_api_url||'';
+document.getElementById('payApiKey').value=s.payout_api_key||'';
+document.getElementById('payMerchantId').value=s.payout_merchant_id||'';
+document.getElementById('payEnabled').value=s.payout_enabled||'1';
+document.getElementById('payinUrl').value=s.payin_api_url||'';
+document.getElementById('payinKey').value=s.payin_api_key||'';
+document.getElementById('payinEnabled').value=s.payin_enabled||'1';
+}
+
+async function savePayoutSettings(){
+const d=await apiFetch('/admin/payout-settings',{method:'PUT',body:JSON.stringify({payout_api_url:document.getElementById('payApiUrl').value,payout_api_key:document.getElementById('payApiKey').value,payout_merchant_id:document.getElementById('payMerchantId').value,payout_enabled:document.getElementById('payEnabled').value==='1',payin_api_url:document.getElementById('payinUrl').value,payin_api_key:document.getElementById('payinKey').value,payin_enabled:document.getElementById('payinEnabled').value==='1'})});
+showResult('payoutResult',d?.success?'Settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== WHATSAPP =====
+async function loadWhatsAppSettings(){
+const d=await apiFetch('/admin/whatsapp-settings');
+if(!d||!d.success)return;const s=d.data;
+document.getElementById('waApiUrl').value=s.wa_api_url||'';
+document.getElementById('waApiKey').value=s.wa_api_key||'';
+document.getElementById('waSender').value=s.wa_sender||'';
+document.getElementById('waTemplate').value=s.wa_template_id||'';
+document.getElementById('waEnabled').value=s.wa_enabled||'1';
+}
+
+async function saveWhatsAppSettings(){
+const d=await apiFetch('/admin/whatsapp-settings',{method:'PUT',body:JSON.stringify({wa_api_url:document.getElementById('waApiUrl').value,wa_api_key:document.getElementById('waApiKey').value,wa_sender:document.getElementById('waSender').value,wa_template_id:document.getElementById('waTemplate').value,wa_enabled:document.getElementById('waEnabled').value==='1'})});
+showResult('waResult',d?.success?'WhatsApp settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== NOTIFICATION =====
+async function sendNotification(){
+const d=await apiFetch('/admin/send-notification',{method:'POST',body:JSON.stringify({role:document.getElementById('notifTarget').value,title:document.getElementById('notifTitle').value,message:document.getElementById('notifMessage').value,type:document.getElementById('notifType').value})});
+showResult('notifResult',d?.success?(d.message||'Sent!'):(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== GENERAL SETTINGS =====
+async function loadGeneralSettings(){
+const d=await apiFetch('/admin/settings');
+if(!d||!d.success)return;
+const settings=d.data||[];
+const groups={};settings.forEach(s=>{const g=s.setting_group||'general';if(!groups[g])groups[g]=[];groups[g].push(s)});
+let html='';
+for(const [group,items] of Object.entries(groups)){
+html+=`<div class="col-12"><hr class="border-secondary border-opacity-25"><p class="text-secondary small fw-bold text-uppercase">${group} Settings</p></div>`;
+items.forEach(s=>{
+html+=`<div class="col-md-6"><label class="form-label">${s.setting_key.replace(/_/g,' ')}</label><input class="form-control setting-input" data-key="${s.setting_key}" value="${s.setting_value||''}"></div>`;
+});
+}
+document.getElementById('settingsBody').innerHTML=html||'<div class="col-12 text-center text-secondary">No settings found</div>';
+}
+
+async function saveGeneralSettings(){
+const inputs=document.querySelectorAll('.setting-input');
+const settings={};inputs.forEach(i=>{settings[i.dataset.key]=i.value});
+const d=await apiFetch('/admin/settings',{method:'PUT',body:JSON.stringify({settings})});
+showResult('settingsResult',d?.success?'Settings saved!':(d?.message||'Failed'),d?.success?'success':'error');
+}
+
+// ===== BANNERS =====
+async function loadBanners(){
+const d=await apiFetch('/admin/banners');
+if(!d||!d.success)return;
+const bs=d.data||[];
+document.getElementById('bannersBody').innerHTML=bs.length?bs.map(b=>`<tr><td>${b.title||'-'}</td><td>${b.target_role||'all'}</td><td>${b.sort_order||0}</td><td><span class="${b.is_active?'badge-success':'badge-failed'}">${b.is_active?'Active':'Inactive'}</span></td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteBanner(${b.id})"><i class="bi bi-trash"></i></button></td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-secondary py-4">No banners</td></tr>';
+}
+
+async function saveBanner(){
+const d=await apiFetch('/admin/banners',{method:'POST',body:JSON.stringify({title:document.getElementById('bnTitle').value,image_url:document.getElementById('bnImage').value,link_url:document.getElementById('bnLink').value,target_role:document.getElementById('bnTarget').value,sort_order:parseInt(document.getElementById('bnSort').value)||0,is_active:document.getElementById('bnActive').value==='1'})});
+if(d?.success){bootstrap.Modal.getInstance(document.getElementById('bannerModal')).hide();loadBanners()}
+}
+
+async function deleteBanner(id){
+if(!confirm('Delete this banner?'))return;
+const d=await apiFetch(`/admin/banners/${id}`,{method:'DELETE'});
+if(d?.success)loadBanners();
+}
+
+// ===== AUDIT LOGS =====
+async function loadAuditLogs(){
+const d=await apiFetch('/admin/audit-logs');
+if(!d||!d.success)return;
+const logs=d.data?.logs||[];
+document.getElementById('auditBody').innerHTML=logs.length?logs.map(l=>`<tr><td>${l.created_at?new Date(l.created_at).toLocaleString('en-IN'):''}</td><td>${l.user_name||'-'}</td><td>${l.action||'-'}</td><td>${l.details||'-'}</td><td>${l.ip_address||'-'}</td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-secondary py-4">No audit logs</td></tr>';
+}
+
+// ===== REPORTS =====
+async function loadReportTransactions(){
+const d=await apiFetch('/admin/transactions');
 if(!d||!d.success)return;
 const txns=d.data?.transactions||d.data||[];
-document.getElementById('txnTableBody').innerHTML=txns.length?txns.map(renderTxnRow).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No transactions found</td></tr>';
+document.getElementById('reportTxnBody').innerHTML=txns.length?txns.map(renderTxnRow).join(''):'<tr><td colspan="7" class="text-center text-secondary py-4">No transactions</td></tr>';
 }
 
-async function loadLedger(){
-const d=await apiFetch('/wallet/transactions');
-if(!d||!d.success)return;
-const entries=d.data?.transactions||d.data||[];
-document.getElementById('ledgerBody').innerHTML=entries.length?entries.map(e=>`<tr><td>${new Date(e.created_at).toLocaleDateString('en-IN')}</td><td>${e.description||e.type||e.reference_id||'-'}</td><td class="text-danger">${['DEBIT','WITHDRAWAL','RECHARGE','DTH','BILL_PAY','DMT','MOVE_BANK'].includes(e.type)?'₹'+Number(e.amount).toFixed(2):''}</td><td class="text-success">${['CREDIT','ADD_MONEY','COMMISSION','REFUND'].includes(e.type)?'₹'+Number(e.amount).toFixed(2):''}</td><td>₹${Number(e.balance_after||0).toFixed(2)}</td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-secondary py-4">No ledger entries</td></tr>';
-}
-
-async function loadDownline(){
-const d=await apiFetch('/users/downline');
-if(!d||!d.success)return;
-const users=Array.isArray(d.data)?d.data:(d.data?.users||[]);
-document.getElementById('downlineBody').innerHTML=users.length?users.map(u=>`<tr><td>${u.name}</td><td>${u.mobile||'-'}</td><td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25" style="padding:4px 10px;border-radius:8px;font-size:.7rem">${(u.role||'').replace(/_/g,' ')}</span></td><td>₹${Number(u.balance||0).toFixed(2)}</td><td><span class="${u.is_active?'badge-success':'badge-failed'}">${u.is_active?'Active':'Inactive'}</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="viewUser(${u.id})"><i class="bi bi-eye"></i></button></td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-secondary py-4">No downline users</td></tr>';
-}
-
-async function loadProfile(){
-const d=await apiFetch('/auth/me');
-if(!d||!d.success)return;
-const p=d.data;
-document.getElementById('profName').value=p.name||'';
-document.getElementById('profEmail').value=p.email||'';
-document.getElementById('profMobile').value=p.mobile||'';
-document.getElementById('profRole').value=(p.role||'').replace(/_/g,' ');
-document.getElementById('profReferral').value=p.referral_code||p.user_id||'';
-}
-
-async function saveProfile(){
-const d=await apiFetch('/auth/profile',{method:'PUT',body:JSON.stringify({name:document.getElementById('profName').value,email:document.getElementById('profEmail').value})});
-showResult('profResult',d?.success?'Profile updated successfully':(d?.message||'Update failed'),d?.success?'success':'error');
-}
-
-async function changePassword(){
-const nw=document.getElementById('pwNew').value;
-const cf=document.getElementById('pwConfirm').value;
-if(nw!==cf){showResult('pwResult','Passwords do not match','error');return}
-const d=await apiFetch('/auth/change-password',{method:'POST',body:JSON.stringify({current_password:document.getElementById('pwCurrent').value,new_password:nw})});
-showResult('pwResult',d?.success?'Password changed successfully':(d?.message||'Update failed'),d?.success?'success':'error');
-}
-
-async function addUser(){
-const d=await apiFetch('/admin/users',{method:'POST',body:JSON.stringify({name:document.getElementById('newUserName').value,email:document.getElementById('newUserEmail').value,mobile:document.getElementById('newUserMobile').value,password:document.getElementById('newUserPassword').value,role:document.getElementById('newUserRole').value})});
-if(d?.success){bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();loadDownline()}
-else{alert(d?.message||'Failed to create user')}
-}
-
-async function doRecharge(){
-const d=await apiFetch('/services/mobile-recharge',{method:'POST',body:JSON.stringify({mobile_number:document.getElementById('rcMobile').value,operator:document.getElementById('rcOperator').value,circle:document.getElementById('rcCircle').value,amount:parseFloat(document.getElementById('rcAmount').value)})});
-showResult('rcResult',d?.success?`Recharge successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Recharge failed'),d?.success?'success':'error');
-if(d?.success)loadDashboard();
-}
-
-async function doDTH(){
-const d=await apiFetch('/services/dth-recharge',{method:'POST',body:JSON.stringify({customer_id:document.getElementById('dthId').value,operator:document.getElementById('dthOperator').value,amount:parseFloat(document.getElementById('dthAmount').value)})});
-showResult('dthResult',d?.success?`DTH Recharge successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Recharge failed'),d?.success?'success':'error');
-}
-
-async function doBillPay(){
-const d=await apiFetch('/services/bill-payment',{method:'POST',body:JSON.stringify({bill_type:document.getElementById('bpType').value,provider:document.getElementById('bpProvider').value,account_number:document.getElementById('bpAccount').value,amount:parseFloat(document.getElementById('bpAmount').value)})});
-showResult('bpResult',d?.success?`Bill payment successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Payment failed'),d?.success?'success':'error');
-}
-
-async function doAEPS(){
-const type=document.getElementById('aepsType').value;
-const endpoints={WITHDRAWAL:'aeps/withdraw',BALANCE_ENQ:'aeps/balance-enquiry',MINI_STATEMENT:'aeps/mini-statement'};
-const d=await apiFetch('/'+(endpoints[type]||'aeps/deposit'),{method:'POST',body:JSON.stringify({aadhaar:document.getElementById('aepsAadhaar').value,bank_name:document.getElementById('aepsBank').value,amount:parseFloat(document.getElementById('aepsAmount').value||0),mobile:document.getElementById('aepsMobile').value})});
-showResult('aepsResult',d?.success?`AEPS ${type} successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'AEPS failed'),d?.success?'success':'error');
-}
-
-async function doDMT(){
-const d=await apiFetch('/dmt/send-money',{method:'POST',body:JSON.stringify({sender_mobile:document.getElementById('dmtSenderMobile').value,sender_name:document.getElementById('dmtSenderName').value,sender_id_proof:document.getElementById('dmtSenderId').value,beneficiary_name:document.getElementById('dmtBenName').value,beneficiary_mobile:document.getElementById('dmtBenMobile').value,beneficiary_account:document.getElementById('dmtBenAccount').value,beneficiary_ifsc:document.getElementById('dmtBenIfsc').value,transfer_mode:document.getElementById('dmtMode').value,amount:parseFloat(document.getElementById('dmtAmount').value)})});
-showResult('dmtResult',d?.success?`Transfer successful! TXN ID: ${d.data?.transaction_id||''}`:(d?.message||d?.error||'Transfer failed'),d?.success?'success':'error');
-}
-
-function generateQR(){
-const amt=document.getElementById('addAmount').value;
-if(!amt||amt<10){alert('Please enter minimum ₹10');return}
-alert(`UPI QR generated for ₹${amt}. In production this would display a scannable QR code.`);
-}
-
-async function doMoveToBank(){
-const d=await apiFetch('/wallet/move-to-bank',{method:'POST',body:JSON.stringify({amount:parseFloat(document.getElementById('mtbAmount').value),bank_name:document.getElementById('mtbBankName').value,account_number:document.getElementById('mtbAccount').value,ifsc_code:document.getElementById('mtbIfsc').value,account_holder_name:document.getElementById('mtbHolderName').value})});
-showResult('mtbResult',d?.success?'Withdrawal request submitted!':(d?.message||'Failed'),d?.success?'success':'error');
-if(d?.success)loadDashboard();
-}
+// ===== CLOCK =====
+function updateClock(){document.getElementById('currentTime').textContent=new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}
+setInterval(updateClock,1000);updateClock();
 
 function handleLogout(){localStorage.clear();window.location.href='/login.html'}
-function viewUser(id){alert('User details view — ID: '+id)}
-
 window.addEventListener('DOMContentLoaded',()=>{loadDashboard()});
 </script>
 </body>
