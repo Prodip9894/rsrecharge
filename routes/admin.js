@@ -295,16 +295,42 @@ router.get('/operators', requireRole('admin'), async (req, res) => {
 // Save operator
 router.post('/operators', requireRole('admin'), async (req, res) => {
   try {
-    const { service_type, operator_name, operator_code, commission_retailer, commission_distributor, commission_md, api_provider_id, api_operator_code, is_active, sort_order } = req.body;
+    const { service_type, operator_name, operator_code, category, commission_retailer, commission_distributor, commission_md, api_provider_id, api_operator_code, is_active, sort_order } = req.body;
+    // Ensure category column exists
+    try { await db.query("ALTER TABLE service_operators ADD COLUMN category VARCHAR(50) DEFAULT NULL"); } catch(e) { /* column already exists */ }
     await db.query(
-      `INSERT INTO service_operators (service_type, operator_name, operator_code, commission_retailer, commission_distributor, commission_md, api_provider_id, api_operator_code, is_active, sort_order)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [service_type, operator_name, operator_code, commission_retailer || 0, commission_distributor || 0, commission_md || 0, api_provider_id || null, api_operator_code || '', is_active !== false ? 1 : 0, sort_order || 0]
+      `INSERT INTO service_operators (service_type, operator_name, operator_code, category, commission_retailer, commission_distributor, commission_md, api_provider_id, api_operator_code, is_active, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [service_type, operator_name, operator_code, category || service_type, commission_retailer || 0, commission_distributor || 0, commission_md || 0, api_provider_id || null, api_operator_code || '', is_active !== false ? 1 : 0, sort_order || 0]
     );
     res.json({ success: true, message: 'Operator saved' });
   } catch (error) {
+    console.error('Save operator error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
+});
+
+// Update operator
+router.put('/operators/:id', requireRole('admin'), async (req, res) => {
+  try {
+    const { service_type, operator_name, operator_code, category, commission_retailer, commission_distributor, commission_md, is_active, sort_order } = req.body;
+    try { await db.query("ALTER TABLE service_operators ADD COLUMN category VARCHAR(50) DEFAULT NULL"); } catch(e) { /* column already exists */ }
+    await db.query(
+      `UPDATE service_operators SET service_type=COALESCE(?,service_type), operator_name=COALESCE(?,operator_name), operator_code=COALESCE(?,operator_code),
+       category=COALESCE(?,category), commission_retailer=COALESCE(?,commission_retailer), commission_distributor=COALESCE(?,commission_distributor),
+       commission_md=COALESCE(?,commission_md), is_active=COALESCE(?,is_active), sort_order=COALESCE(?,sort_order) WHERE id=?`,
+      [service_type, operator_name, operator_code, category, commission_retailer, commission_distributor, commission_md, is_active!==undefined?(is_active?1:0):null, sort_order, req.params.id]
+    );
+    res.json({ success: true, message: 'Operator updated' });
+  } catch (error) { console.error('Update operator error:', error); res.status(500).json({ success: false, message: 'Server error' }); }
+});
+
+// Delete operator
+router.delete('/operators/:id', requireRole('admin'), async (req, res) => {
+  try {
+    await db.query('DELETE FROM service_operators WHERE id = ?', [req.params.id]);
+    res.json({ success: true, message: 'Operator deleted' });
+  } catch (error) { res.status(500).json({ success: false, message: 'Server error' }); }
 });
 
 // Admin adjust wallet
@@ -797,10 +823,12 @@ router.post('/api-operator-codes', requireRole('admin'), async (req, res) => {
   try {
     const { provider_id, service_type, internal_code, api_operator_code } = req.body;
     // Create table if not exists
-    await db.query(`CREATE TABLE IF NOT EXISTS api_operator_codes (
-      id INT AUTO_INCREMENT PRIMARY KEY, provider_id INT, service_type VARCHAR(50),
-      internal_code VARCHAR(50), api_operator_code VARCHAR(50), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )`);
+    try {
+      await db.query(`CREATE TABLE IF NOT EXISTS api_operator_codes (
+        id INT AUTO_INCREMENT PRIMARY KEY, provider_id INT, service_type VARCHAR(50),
+        internal_code VARCHAR(50), api_operator_code VARCHAR(50), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+    } catch(e) { /* table already exists */ }
     await db.query('INSERT INTO api_operator_codes (provider_id, service_type, internal_code, api_operator_code) VALUES (?,?,?,?)',
       [provider_id, service_type, internal_code, api_operator_code]);
     res.json({ success: true, message: 'Mapping saved' });
